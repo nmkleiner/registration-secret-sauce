@@ -1,11 +1,17 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import path from "path";
-import eslint from "vite-plugin-eslint";
+import dtsPlugin from "vite-plugin-dts";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue(), eslint()],
+  plugins: [
+    vue(),
+    dtsPlugin({
+      insertTypesEntry: true,
+    }),
+  ],
+
   resolve: {
     extensions: [".ts", ".js", ".vue"],
     // alias: {

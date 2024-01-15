@@ -5,6 +5,7 @@ import { TaglitOrigin } from "./taglit-origin.enum";
 import { HttpClientInstanceInterface } from "../HttpClient/http-client.interface";
 import { AppHttpClient } from "../HttpClient/http-client";
 import { useConfig } from "../../Config/use-config.ts";
+import { OnwardCountries } from "../../Enums/onward-countries.enum.ts";
 
 export class BaseApi implements ApiInterface {
   public httpClient: HttpClientInstanceInterface;

@@ -7,6 +7,8 @@ import {
 import { HttpClientInterface } from "./http-client.interface";
 import { UNAVAILABLE_SEASON } from "./Constants/http-error";
 import { useConfig } from "../../Config/use-config.ts";
+import { ModalNames } from "../../Stores/Modals/modals-state.interface.ts";
+import { useModalsStore } from "../../Stores/Modals/modals.store.ts";
 
 class HttpClient implements HttpClientInterface {
   /**

@@ -4,6 +4,7 @@ import {
   AuthenticateResponse,
   CheckDetailsRequestData,
   CheckDetailsResponse,
+  ControlQuestionReturningApplicant,
   ControlQuestionsResponse,
   CreateAccountRequestData,
   CreateAccountResponse,
@@ -22,7 +23,8 @@ class AuthApi extends BaseApi {
       );
       return response.data.user;
     } catch (e) {
-      await router.push({ name: OnwardPathNames.Login });
+      alert("implement redirect to login page here");
+      // await router.push({ name: OnwardPathNames.Login });
     }
   }
 
@@ -120,7 +122,7 @@ class AuthApi extends BaseApi {
     payload: ControlQuestionReturningApplicant
   ): Promise<ControlQuestionsResponse> {
     const data = {
-      application_id: useUserStore().returningApplicantForm.applicationId,
+      application_id: payload.applicationId,
       field_set: payload.fieldSet,
       answer: payload.answer,
     };
