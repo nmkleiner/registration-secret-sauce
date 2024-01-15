@@ -1,5 +1,3 @@
-import { returningApplicantTranslationInterface } from '@/Modules/Common/Stores/Country/country-state.interface';
-
 export type GetCountryResponse = CountryDto;
 
 export interface GetTranslationsResponse {
@@ -8,21 +6,20 @@ export interface GetTranslationsResponse {
   returningApplicantTranslation: returningApplicantTranslationInterface;
 }
 
-
 export class returningApplicantTranslationInterface {
-    header: string;
-    firstQuestionBeforeMonth: string;
-    firstQuestionAfterMonth: string;
-    secondQuestionBeforeMonth: string;
-    secondQuestionAfterMonth: string;
-    yesOption: string;
-    noOption: string;
-    notSureOption: string;
-    beforeWaiverLink: string;
-    waiverLink: string;
-    footerYes: string;
-    footerNo: string;
-    continue: string;
+  header: string;
+  firstQuestionBeforeMonth: string;
+  firstQuestionAfterMonth: string;
+  secondQuestionBeforeMonth: string;
+  secondQuestionAfterMonth: string;
+  yesOption: string;
+  noOption: string;
+  notSureOption: string;
+  beforeWaiverLink: string;
+  waiverLink: string;
+  footerYes: string;
+  footerNo: string;
+  continue: string;
 }
 
 export interface CountryDto {

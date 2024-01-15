@@ -1,15 +1,20 @@
-import { BaseApi } from '@/Core/Infrastructure/API/base.api';
-import { AppHttpClient } from '@/Core/Infrastructure/HttpClient/http-client';
-import { RawCountryOption } from '../../../../../../registration-secret-sauce/Interfaces';
-import { FormBuilderApiRoutes } from '@/Modules/Common/API/FormBuilderApi/form-builder-api-routes.enum';
-import { GetFormDataPayload } from '@/Modules/Common/API/FormBuilderApi/Interfaces/get-form-data-payload.interface';
-import { GetAddressByZipCodeResponse } from '@/Modules/Common/API/FormBuilderApi/Interfaces/get-address-by-zipcode-response.interface';
-import { RawSeason } from '../../../../../../registration-secret-sauce/Interfaces';
-import { FormDataResponse } from '@/Modules/Common/API/FormBuilderApi/Interfaces/get-form-data-base.interface';
-import { PayloadProgramData, Program } from '@/Modules/Onward/Interfaces/program.interface';
+import { BaseApi } from "../BaseApi/base.api.ts";
+import { AppHttpClient } from "../HttpClient/http-client.ts";
+import { GetFormDataPayload } from "./Interfaces/get-form-data-payload.interface.ts";
+import { FormDataResponse } from "./Interfaces/get-form-data-base.interface.ts";
+import { FormBuilderApiRoutes } from "./form-builder-api-routes.enum.ts";
+import { GetAddressByZipCodeResponse } from "./Interfaces/get-address-by-zipcode-response.interface.ts";
+import {
+  PayloadProgramData,
+  Program,
+  RawCountryOption,
+  RawSeason,
+} from "../../Interfaces";
 
 class FormBuilderApi extends BaseApi {
-  public async getFormData(payload: GetFormDataPayload): Promise<FormDataResponse> {
+  public async getFormData(
+    payload: GetFormDataPayload
+  ): Promise<FormDataResponse> {
     try {
       const response = await this.httpClient.get<FormDataResponse>(
         FormBuilderApiRoutes.GetFormData,
@@ -18,7 +23,7 @@ class FormBuilderApi extends BaseApi {
             product: this.product,
             ...payload,
           },
-        },
+        }
       );
 
       return response.data;
@@ -30,18 +35,20 @@ class FormBuilderApi extends BaseApi {
 
   public async getCountryOptions(): Promise<RawCountryOption[]> {
     const response = await this.httpClient.get<RawCountryOption[]>(
-      FormBuilderApiRoutes.CountriesList,
+      FormBuilderApiRoutes.CountriesList
     );
 
     return response.data;
   }
 
-  public async getAvailableSeasons(countryIsoCode: string): Promise<RawSeason[]> {
+  public async getAvailableSeasons(
+    countryIsoCode: string
+  ): Promise<RawSeason[]> {
     const response = await this.httpClient.get<RawSeason[]>(
       FormBuilderApiRoutes.getAvailableSeasons,
       {
         params: { countryIsoCode },
-      },
+      }
     );
 
     return response.data;
@@ -49,16 +56,17 @@ class FormBuilderApi extends BaseApi {
 
   public async getAddressByZipCode(
     zipCode: string,
-    country: string,
+    country: string
   ): Promise<GetAddressByZipCodeResponse | null> {
     try {
-      const zipCodeDataResponse = await this.httpClient.post<GetAddressByZipCodeResponse>(
-        FormBuilderApiRoutes.GetAddressByZipCode,
-        {
-          zipCode,
-          country,
-        },
-      );
+      const zipCodeDataResponse =
+        await this.httpClient.post<GetAddressByZipCodeResponse>(
+          FormBuilderApiRoutes.GetAddressByZipCode,
+          {
+            zipCode,
+            country,
+          }
+        );
 
       return zipCodeDataResponse.data;
     } catch (e) {
@@ -66,14 +74,17 @@ class FormBuilderApi extends BaseApi {
     }
   }
 
-  public async sendSMS(phoneNumber: string, countryIsoCode: string): Promise<boolean | null> {
+  public async sendSMS(
+    phoneNumber: string,
+    countryIsoCode: string
+  ): Promise<boolean | null> {
     try {
       const sendSMSResponse = await this.httpClient.post<{ success: boolean }>(
         FormBuilderApiRoutes.SendPassportScanSms,
         {
           phoneNumber,
           countryIsoCode,
-        },
+        }
       );
       return sendSMSResponse.data.success;
     } catch (e) {
@@ -81,10 +92,15 @@ class FormBuilderApi extends BaseApi {
     }
   }
 
-  public async getOnwardPrograms(payloadProgramData: PayloadProgramData): Promise<Program[]> {
-    const response = await this.httpClient.get(FormBuilderApiRoutes.getOnwardPrograms, {
-      params: { ...payloadProgramData },
-    });
+  public async getOnwardPrograms(
+    payloadProgramData: PayloadProgramData
+  ): Promise<Program[]> {
+    const response = await this.httpClient.get(
+      FormBuilderApiRoutes.getOnwardPrograms,
+      {
+        params: { ...payloadProgramData },
+      }
+    );
 
     return response.data;
   }

@@ -1,4 +1,4 @@
-import { PaymentStatus } from '@paypal/paypal-js';
+import { PaymentStatus } from "../../../Interfaces";
 
 export interface GetApplicationsResponse {
   data: {

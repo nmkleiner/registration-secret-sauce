@@ -1,21 +1,23 @@
-import { BaseApi } from '@/Core/Infrastructure/API/base.api';
-import { UploadFilesRoutes } from '@/Modules/Common/API/UploadFilesApi/upload-files-routes.enum';
-import { AppHttpClient } from '@/Core/Infrastructure/HttpClient/http-client';
+import { BaseApi } from "../BaseApi/base.api.ts";
+import { AppHttpClient } from "../HttpClient/http-client.ts";
+import { AxiosResponse } from "axios";
 import {
   UploadPhase2FilesResponseDto,
   UploadSecureFileResponseDto,
   UploadSecureFilesResponse,
-} from '@/Modules/Common/API/UploadFilesApi/Interfaces/upload-secure-files.response';
-import { useUploadProgress } from '@/Core/Composables/uploadProgress/useUploadProgress';
-import { AxiosResponse } from 'axios';
+} from "./Interfaces/upload-secure-files.response.ts";
+import { UploadFilesRoutes } from "./upload-files-routes.enum.ts";
+import { useUploadProgress } from "../uploadProgress/useUploadProgress.ts";
 
 class UploadFilesApi extends BaseApi {
-  public async uploadFileChunks(file: File): Promise<UploadSecureFileResponseDto> {
+  public async uploadFileChunks(
+    file: File
+  ): Promise<UploadSecureFileResponseDto> {
     const openSessionUploadLargeFile = await this.httpClient.post(
       UploadFilesRoutes.initiateChunksUpload,
       {
         original_file_name: file.name,
-      },
+      }
     );
     const responseData = openSessionUploadLargeFile.data.data;
 
@@ -29,30 +31,33 @@ class UploadFilesApi extends BaseApi {
       const chunk = file.slice(start, end);
 
       const formData = new FormData();
-      formData.append('file', chunk);
-      formData.append('index', String(chunkIndex));
-      formData.append('key_name', responseData.key_name);
-      formData.append('bucket_name', responseData.bucket);
-      formData.append('upload_id', responseData.upload_id);
+      formData.append("file", chunk);
+      formData.append("index", String(chunkIndex));
+      formData.append("key_name", responseData.key_name);
+      formData.append("bucket_name", responseData.bucket);
+      formData.append("upload_id", responseData.upload_id);
 
       try {
         const config = useUploadProgress().config;
 
-        await this.httpClient.post(UploadFilesRoutes.uploadChunks, formData, config);
+        await this.httpClient.post(
+          UploadFilesRoutes.uploadChunks,
+          formData,
+          config
+        );
       } catch (error) {
-        console.error('Error uploading chunk:', error);
+        console.error("Error uploading chunk:", error);
       }
     }
 
     try {
-      const response = await this.httpClient.post<{ data: UploadSecureFileResponseDto }>(
-        UploadFilesRoutes.completeChunksUpload,
-        {
-          key_name: responseData.key_name,
-          bucket_name: responseData.bucket,
-          upload_id: responseData.upload_id,
-        },
-      );
+      const response = await this.httpClient.post<{
+        data: UploadSecureFileResponseDto;
+      }>(UploadFilesRoutes.completeChunksUpload, {
+        key_name: responseData.key_name,
+        bucket_name: responseData.bucket,
+        upload_id: responseData.upload_id,
+      });
 
       return response.data.data;
     } catch (e) {
@@ -60,15 +65,18 @@ class UploadFilesApi extends BaseApi {
     }
   }
 
-  public async uploadFiles(formData: FormData): Promise<UploadSecureFilesResponse> {
+  public async uploadFiles(
+    formData: FormData
+  ): Promise<UploadSecureFilesResponse> {
     const config = useUploadProgress().config;
 
     try {
-      const uploadFilesResponse: UploadSecureFilesResponse = await this.httpClient.post(
-        UploadFilesRoutes.secureFiles,
-        formData,
-        config,
-      );
+      const uploadFilesResponse: UploadSecureFilesResponse =
+        await this.httpClient.post(
+          UploadFilesRoutes.secureFiles,
+          formData,
+          config
+        );
       return uploadFilesResponse;
     } catch (e) {
       return null;
@@ -78,14 +86,18 @@ class UploadFilesApi extends BaseApi {
   public async uploadPhase2Attachments(
     formData: FormData,
     contactId: string,
-    applicationId: string,
+    applicationId: string
   ): Promise<UploadPhase2FilesResponseDto[]> {
     const config = useUploadProgress().config;
 
     try {
       const uploadFilesResponse = await this.httpClient.post<{
         data: UploadPhase2FilesResponseDto[];
-      }>(`${UploadFilesRoutes.uploadPhase2Files}/${contactId || applicationId}`, formData, config);
+      }>(
+        `${UploadFilesRoutes.uploadPhase2Files}/${contactId || applicationId}`,
+        formData,
+        config
+      );
 
       return uploadFilesResponse.data.data;
     } catch (e) {
@@ -100,10 +112,10 @@ class UploadFilesApi extends BaseApi {
       const response: AxiosResponse = await this.httpClient.post(
         UploadFilesRoutes.uploadAttachments,
         formData,
-        config,
+        config
       );
 
-      return response?.data?.file || '';
+      return response?.data?.file || "";
     } catch (e) {
       console.error(e);
       return null;
@@ -112,9 +124,12 @@ class UploadFilesApi extends BaseApi {
 
   public async downloadWaiverFile(): Promise<Blob> {
     try {
-      const response: AxiosResponse = await this.httpClient.get<Blob>(UploadFilesRoutes.waiverPdf, {
-        responseType: 'blob',
-      });
+      const response: AxiosResponse = await this.httpClient.get<Blob>(
+        UploadFilesRoutes.waiverPdf,
+        {
+          responseType: "blob",
+        }
+      );
 
       return response.data;
     } catch (e) {

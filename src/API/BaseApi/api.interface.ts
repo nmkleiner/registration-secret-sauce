@@ -1,4 +1,4 @@
-import { HttpClientInstanceInterface } from '../../../excel-registration-front/src/Core/Infrastructure/HttpClient/http-client.interface';
+import { HttpClientInstanceInterface } from "../HttpClient/http-client.interface.ts";
 
 export interface ApiInterface {
   httpClient: HttpClientInstanceInterface;

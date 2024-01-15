@@ -1,14 +1,12 @@
-import { useModalsStore } from '../../../excel-registration-front/src/Modules/Common/Stores/Modals/modals.store';
-import AppConfig from '../../../excel-registration-front/src/Core/Infrastructure/Config/AppConfig';
-import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
-import { HttpStatusEnum } from './Enums/http-status.enum';
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from "axios";
+import { HttpStatusEnum } from "./Enums/http-status.enum";
 import {
   extractErrorId,
   extractResponseCode,
-} from './Helpers/ExceptionsHelper';
-import { ModalNames } from '../../../excel-registration-front/src/Modules/Common/Stores/Modals/modals-state.interface';
-import { HttpClientInterface } from './http-client.interface';
-import { UNAVAILABLE_SEASON } from './Constants/http-error';
+} from "./Helpers/ExceptionsHelper";
+import { HttpClientInterface } from "./http-client.interface";
+import { UNAVAILABLE_SEASON } from "./Constants/http-error";
+import { useConfig } from "../../Config/use-config.ts";
 
 class HttpClient implements HttpClientInterface {
   /**
@@ -29,16 +27,17 @@ class HttpClient implements HttpClientInterface {
    * */
   public getConfig(): AxiosRequestConfig {
     const config: AxiosRequestConfig = {
-      baseURL: AppConfig.baseApiUrl,
+      baseURL: useConfig().getConfig("VITE_BASE_API_URL"),
       withCredentials: true,
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         Authorization: null,
       },
     };
 
-    if (AppConfig.jwt) {
-      config.headers.Authorization = AppConfig.jwt;
+    const jwt = useConfig().getConfig("jwt");
+    if (jwt) {
+      config.headers.Authorization = jwt;
     }
 
     return config;
@@ -46,7 +45,7 @@ class HttpClient implements HttpClientInterface {
 
   public setRequestInterceptor() {
     this.instance.interceptors.request.use((config) => {
-      config.headers.Authorization = AppConfig.jwt;
+      config.headers.Authorization = useConfig().getConfig("jwt");
       console.log(config?.url, JSON.stringify(config?.params));
       return config;
     });
@@ -76,7 +75,7 @@ class HttpClient implements HttpClientInterface {
             await useModalsStore().openModal(ModalNames.unavailableSeason);
             return;
         }
-      },
+      }
     );
   }
 }

@@ -1,7 +1,4 @@
-import {
-  UploadedFile,
-  UserAnswer,
-} from '../../../../../../../registration-secret-sauce/Types/Form/user-answer.type';
+import { UploadedFile, UserAnswer } from "../../../Types";
 
 export interface SubmitSectionDto {
   formSectionId: string;

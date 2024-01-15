@@ -1,3 +1,5 @@
+export * from "./application-data.interfaces.ts";
+export * from "./program.interface.ts";
 export * from "./dropdowns-from-db.interface.ts";
 export * from "./contact-data.interfaces.ts";
 export * from "./raw-dropdown-from-db-option.interface.ts";

@@ -1,9 +1,11 @@
-import { PaymentStatus } from '@paypal/paypal-js';
+import { PaymentStatus } from "../../../Interfaces";
 
-export type SaveSectionResponse = ExcelSaveSectionResponse | OnwardSaveSectionResponse;
+export type SaveSectionResponse =
+  | ExcelSaveSectionResponse
+  | OnwardSaveSectionResponse;
 
 export interface ExcelSaveSectionResponse {
-  type: 'EXCEL';
+  type: "EXCEL";
   application: {
     Id: string;
     Final_Eligibility__c: string;
@@ -22,14 +24,14 @@ export interface ExcelSaveSectionResponse {
 }
 
 export interface OnwardSaveSectionResponse {
-  type: 'ONWARD';
+  type: "ONWARD";
   application: {
     Allow_Payment__c: boolean;
     Application_Trip_Offering_Name__c: string;
     Application_Trip_Offering__c: string;
     EX_Move_to_Registration_Phase_II__c: boolean;
     FSS_Phase_2__c: boolean;
-    Final_Eligibility__c: 'TBD' | 'Eligible' | 'Ineligible';
+    Final_Eligibility__c: "TBD" | "Eligible" | "Ineligible";
     Id: string;
     Is_Trip_Change_Allowed__c: boolean;
     Phase_1_Allow_Submission__c: boolean;
@@ -37,7 +39,7 @@ export interface OnwardSaveSectionResponse {
     Phase_2_Complete__c: string;
     Phase_2_Submission_Date__c: string;
     Website_Change_Trip_Required__c: boolean;
-    'ED_College_University_Name__r.Taglitom_Campus_ID__c': string;
+    "ED_College_University_Name__r.Taglitom_Campus_ID__c": string;
     First_Priority_With_Whom_Want_to_Go__c: string;
     ED_Are_you_currently_a_student__c: string;
     Allow_Alumni_Registration__c: boolean;

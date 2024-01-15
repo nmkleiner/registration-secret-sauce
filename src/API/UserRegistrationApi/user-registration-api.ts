@@ -1,14 +1,14 @@
-import { BaseApi } from '@/Core/Infrastructure/API/base.api';
-import { AppHttpClient } from '@/Core/Infrastructure/HttpClient/http-client';
-import { UserRegistrationRoutes } from '@/Modules/Common/API/UserRegistrationApi/user-registration-routes.enum';
-import { SubmitSectionDto } from '@/Modules/Common/API/UserRegistrationApi/Interfaces/submit-section.dto';
+import { SaveSectionResponse } from "./Interfaces/save-section.response.ts";
+import { BaseApi } from "../BaseApi/base.api.ts";
 import {
   GetApplicationsResponse,
   RawApplication,
-} from '@/Modules/Common/API/UserRegistrationApi/Interfaces/get-applications.response';
-import { SaveSectionResponse } from '@/Modules/Common/API/UserRegistrationApi/Interfaces/save-section.response';
-import { CreateNewExcelApplicationDto } from '@/Modules/Common/API/UserRegistrationApi/Interfaces/create-new-application.dto';
-import { UpdateOnwardApplicantDto } from '@/Modules/Common/API/UserRegistrationApi/Interfaces/update-onward-applicant.dto';
+} from "./Interfaces/get-applications.response.ts";
+import { UserRegistrationRoutes } from "./user-registration-routes.enum.ts";
+import { SubmitSectionDto } from "./Interfaces/submit-section.dto.ts";
+import { CreateNewExcelApplicationDto } from "./Interfaces/create-new-application.dto.ts";
+import { UpdateOnwardApplicantDto } from "./Interfaces/update-onward-applicant.dto.ts";
+import { AppHttpClient } from "../HttpClient/http-client.ts";
 
 class UserRegistrationApi extends BaseApi {
   public async getApplications(contactId: string): Promise<RawApplication[]> {
@@ -16,34 +16,34 @@ class UserRegistrationApi extends BaseApi {
       UserRegistrationRoutes.getApplications,
       {
         params: { contactId },
-      },
+      }
     );
 
     return response.data.data.excel_applications;
   }
 
   public async submitSection(
-    submitSectionDto: SubmitSectionDto,
+    submitSectionDto: SubmitSectionDto
   ): Promise<SaveSectionResponse | { success: false }> {
     const response = await this.httpClient.post<SaveSectionResponse>(
       UserRegistrationRoutes.submitSection,
       {
         ...submitSectionDto,
         product: this.product,
-      },
+      }
     );
 
     return response ? response.data : { success: false };
   }
 
   public async createNewExcelApplication(
-    submitSectionDto: CreateNewExcelApplicationDto,
+    submitSectionDto: CreateNewExcelApplicationDto
   ): Promise<SaveSectionResponse> {
     const response = await this.httpClient.post<SaveSectionResponse>(
       UserRegistrationRoutes.createNewExcelApplication,
       {
         ...submitSectionDto,
-      },
+      }
     );
 
     return response.data;
@@ -54,7 +54,9 @@ class UserRegistrationApi extends BaseApi {
   }
 
   public async submitIneligibleApplication() {
-    return this.httpClient.post(UserRegistrationRoutes.submitIneligibleApplication);
+    return this.httpClient.post(
+      UserRegistrationRoutes.submitIneligibleApplication
+    );
   }
 }
 

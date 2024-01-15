@@ -1,6 +1,6 @@
 import { PriorityInput } from "./priority-input.type.ts";
 import { UserInput } from "./user-input.type.ts";
-import { UploadPhase2FilesResponseDto } from "../../../excel-registration-front/src/Modules/Common/API/UploadFilesApi/Interfaces/upload-secure-files.response";
+import { UploadPhase2FilesResponseDto } from "../../API";
 
 export type UserAnswer =
   | StandardUserAnswer

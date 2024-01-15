@@ -1,14 +1,16 @@
-import { ContactData } from '../../../../../../../registration-secret-sauce/Interfaces';
-import { ApplicationData } from '@/Modules/Problems/Interfaces/application-data.interfaces';
-import { DropdownsFromDB } from '../../../../../../../registration-secret-sauce/Interfaces';
+import { BaseFormDataResponse } from "./get-form-data-base.interface.ts";
+import {
+  ApplicationData,
+  ContactData,
+  DropdownsFromDB,
+} from "../../../Interfaces";
 // import { JobOfferingResponse } from '@/Modules/Excel/Interfaces/Internship/job-offering-response';
-import { BaseFormDataResponse } from '@/Modules/Common/API/FormBuilderApi/Interfaces/get-form-data-base.interface';
 
 export interface ExcelFormDataResponse extends BaseFormDataResponse {
-  type: 'EXCEL';
+  type: "EXCEL";
   contactData: ContactData;
-  applicationData: ApplicationData['EXCEL'];
-  dropdownsFromDB: DropdownsFromDB['EXCEL'];
+  applicationData: ApplicationData["EXCEL"];
+  dropdownsFromDB: DropdownsFromDB["EXCEL"];
   settings: Settings;
   israelPassport: IsraelPassport;
   industries: IndustryResponseInterface[];

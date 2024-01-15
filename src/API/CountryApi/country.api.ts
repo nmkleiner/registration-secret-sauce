@@ -1,13 +1,15 @@
+import { BaseApi } from "../BaseApi/base.api.ts";
+import { AppHttpClient } from "../HttpClient/http-client.ts";
 import {
   GetCountryResponse,
   GetTranslationsResponse,
-} from '@/Modules/Common/API/CountryApi/country-api.interfaces';
-import { BaseApi } from '@/Core/Infrastructure/API/base.api';
-import { CountryApiRoutes } from '@/Modules/Common/API/CountryApi/country-api-routes.enum';
-import { AppHttpClient } from '@/Core/Infrastructure/HttpClient/http-client';
+} from "./country-api.interfaces.ts";
+import { CountryApiRoutes } from "./country-api-routes.enum.ts";
 
 class CountryApi extends BaseApi {
-  public async getTranslations(countryIsoCode: string): Promise<GetTranslationsResponse> {
+  public async getTranslations(
+    countryIsoCode: string
+  ): Promise<GetTranslationsResponse> {
     try {
       const response = await this.httpClient.get<GetTranslationsResponse>(
         CountryApiRoutes.GetTranslations,
@@ -16,7 +18,7 @@ class CountryApi extends BaseApi {
             product: this.product,
             countryIsoCode,
           },
-        },
+        }
       );
 
       return response.data;
@@ -28,12 +30,15 @@ class CountryApi extends BaseApi {
 
   public async getCountry(countryIsoCode: string): Promise<GetCountryResponse> {
     try {
-      const response = await this.httpClient.get<GetCountryResponse>(CountryApiRoutes.GetCountry, {
-        params: {
-          product: this.product,
-          countryIsoCode,
-        },
-      });
+      const response = await this.httpClient.get<GetCountryResponse>(
+        CountryApiRoutes.GetCountry,
+        {
+          params: {
+            product: this.product,
+            countryIsoCode,
+          },
+        }
+      );
 
       return response.data;
     } catch (e) {
@@ -45,7 +50,7 @@ class CountryApi extends BaseApi {
   public async getControlQuestionActive(): Promise<boolean> {
     try {
       const response = await this.httpClient.get<boolean>(
-        CountryApiRoutes.GetControlQuestionActive,
+        CountryApiRoutes.GetControlQuestionActive
       );
       return response.data;
     } catch (e) {
