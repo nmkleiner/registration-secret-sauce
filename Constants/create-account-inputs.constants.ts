@@ -1,0 +1,10 @@
+export const email = 'email';
+export const country = 'country';
+export const phone = 'phone_number';
+export const birthDate = 'birth_date';
+export const firstName = 'first_name';
+export const lastName = 'last_name';
+export const gender = 'gender';
+export const secondaryEmail = 'secondary_email';
+export const mailingCountryCode = 'mailing_country_code';
+export const countryOfBirth = 'country_of_birth';
