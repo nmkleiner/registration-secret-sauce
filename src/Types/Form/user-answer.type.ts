@@ -1,8 +1,11 @@
-import { PriorityInput } from './priority-input.type';
-import { UserInput } from './user-input.type';
-import { UploadPhase2FilesResponseDto } from '../../../excel-registration-front/src/Modules/Common/API/UploadFilesApi/Interfaces/upload-secure-files.response';
+import { PriorityInput } from "./priority-input.type.ts";
+import { UserInput } from "./user-input.type.ts";
+import { UploadPhase2FilesResponseDto } from "../../../excel-registration-front/src/Modules/Common/API/UploadFilesApi/Interfaces/upload-secure-files.response";
 
-export type UserAnswer = StandardUserAnswer | MedicalDiagnosisUserAnswer | DuplicatedUserAnswer;
+export type UserAnswer =
+  | StandardUserAnswer
+  | MedicalDiagnosisUserAnswer
+  | DuplicatedUserAnswer;
 
 export interface StandardUserAnswer {
   key: string;

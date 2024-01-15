@@ -9,7 +9,7 @@ import {
   mailingCountryCode,
   phone,
   secondaryEmail,
-} from '../Constants/create-account-inputs.constants';
+} from "../Constants/create-account-inputs.constants.ts";
 
 export enum CreateAccountInputs {
   EMAIL = email,
@@ -22,8 +22,8 @@ export enum CreateAccountInputs {
   SECONDARY_EMAIL = secondaryEmail,
   MAILING_COUNTRY_CODE = mailingCountryCode,
   COUNTRY_OF_BIRTH = countryOfBirth,
-  PRIVACY_SIGNATURE = 'privacy_signature',
-  SEASON_ID = 'season_id',
-  TAGLIT_PROGRAM = 'taglit_program',
-  TO_PARTNER_RELATION_ID = 'to_partner_relation_id',
+  PRIVACY_SIGNATURE = "privacy_signature",
+  SEASON_ID = "season_id",
+  TAGLIT_PROGRAM = "taglit_program",
+  TO_PARTNER_RELATION_ID = "to_partner_relation_id",
 }
