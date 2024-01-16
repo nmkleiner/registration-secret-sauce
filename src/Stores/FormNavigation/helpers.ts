@@ -1,12 +1,12 @@
-import { first, last } from 'lodash-es';
-import router from '../../Router';
-import { FormSection } from '../../Entities/Section';
-import { RegistrationTab } from '../../Entities/Tab/registration-tab';
+import { first, last } from "lodash-es";
+import router from "../../../../excel-registration-front/src/Core/Router";
+import { FormSection } from "../../Entities/Section";
+import { RegistrationTab } from "../../Entities/Tab/registration-tab";
 
 export function handleSectionSave(
   formSection: FormSection,
   selectedTab: RegistrationTab,
-  tabs: RegistrationTab[],
+  tabs: RegistrationTab[]
 ) {
   const selectedTabSections = selectedTab.sections;
 
@@ -20,14 +20,20 @@ export function handleSectionSave(
 export function handleSectionSaveOnward(
   formSection: FormSection,
   selectedTab: RegistrationTab,
-  tabs: RegistrationTab[],
+  tabs: RegistrationTab[]
 ) {
   const selectedTabSections = selectedTab.sections;
 
   setTimeout(() => {
     if (formSection === last(selectedTabSections)) {
-      const otherTabSections = selectedTabSections.filter((section) => section !== formSection);
-      if (otherTabSections.some((section) => !section.isCompleted && !section.saveInProcess)) {
+      const otherTabSections = selectedTabSections.filter(
+        (section) => section !== formSection
+      );
+      if (
+        otherTabSections.some(
+          (section) => !section.isCompleted && !section.saveInProcess
+        )
+      ) {
         return;
       }
       selectNextTab(selectedTab, tabs);
@@ -37,7 +43,10 @@ export function handleSectionSaveOnward(
   }, 1200);
 }
 
-export function selectNextTab(selectedTab: RegistrationTab, tabs: RegistrationTab[]) {
+export function selectNextTab(
+  selectedTab: RegistrationTab,
+  tabs: RegistrationTab[]
+) {
   const selectedTabOrder = selectedTab.order;
   const nextTab = tabs.find((tab) => tab.order === selectedTabOrder + 1);
 
@@ -47,10 +56,13 @@ export function selectNextTab(selectedTab: RegistrationTab, tabs: RegistrationTa
   }
 }
 
-export function scrollToNextSection(formSection: FormSection, selectedTab: RegistrationTab) {
+export function scrollToNextSection(
+  formSection: FormSection,
+  selectedTab: RegistrationTab
+) {
   const selectedTabSections = selectedTab.sections;
   const nextSection = selectedTabSections.find(
-    (section) => section.order > formSection.order && section.isVisible,
+    (section) => section.order > formSection.order && section.isVisible
   );
 
   nextSection?.open().scrollToSection();
