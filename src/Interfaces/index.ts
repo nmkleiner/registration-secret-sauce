@@ -1,5 +1,5 @@
 export type * from "./application-data.interfaces.ts";
-export type * from "./program.interface.ts";
+export type { Program, PayloadProgramData } from "./program.interface.ts";
 export type * from "./dropdowns-from-db.interface.ts";
 export type * from "./contact-data.interfaces.ts";
 export type * from "./raw-dropdown-from-db-option.interface.ts";
