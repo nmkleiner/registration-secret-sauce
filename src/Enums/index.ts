@@ -8,6 +8,7 @@ export * from "./gender.enum.ts";
 export * from "./input-types.enum.ts";
 export * from "./paypal-errors.enum.ts";
 export * from "./question-format.enum.ts";
+export * from "./question-names.enum.ts";
 export * from "./section-names.enum.ts";
 export * from "./user-lead-type.enum.ts";
 export * from "./taglit-origin.enum.ts";
