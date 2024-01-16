@@ -1,4 +1,4 @@
-import { Program } from "./program.interface.ts";
+import { Program } from "registration-secret-sauce";
 
 export type PaymentStatus = "Unpaid" | "Paid";
 
