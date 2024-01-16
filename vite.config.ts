@@ -22,7 +22,7 @@ export default defineConfig({
     lib: {
       entry: path.resolve("src/index.ts"),
       name: "RegistrationSecretSauce",
-      fileName: (format) => `registration-secret-sauce.${format}.js`,
+      fileName: `registration-secret-sauce`,
     },
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled

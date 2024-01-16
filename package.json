@@ -1,7 +1,7 @@
 {
   "name": "registration-secret-sauce",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "scripts": {
     "serve": "vite",
@@ -28,13 +28,13 @@
   "files": [
     "dist"
   ],
-  "main": "./dist/registration-secret-sauce.umd.js",
-  "module": "./dist/registration-secret-sauce.es.js",
+  "main": "./dist/registration-secret-sauce.umd.cjs",
+  "module": "./dist/registration-secret-sauce.js",
   "types": "./dist/registration-secret-sauce.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/registration-secret-sauce.es.js",
-      "require": "./dist/registration-secret-sauce.umd.js"
+      "import": "./dist/registration-secret-sauce.js",
+      "require": "./dist/registration-secret-sauce.umd.cjs"
     }
   }
 }
