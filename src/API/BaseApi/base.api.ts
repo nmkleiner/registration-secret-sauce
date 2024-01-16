@@ -1,7 +1,7 @@
 import { ApiInterface } from "./api.interface";
-import { TaglitProgram } from "./taglit-program.enum";
-import { TaglitProduct } from "./taglit-product.enum";
-import { TaglitOrigin } from "./taglit-origin.enum";
+import { TaglitProgram } from "../../Enums/taglit-program.enum.ts";
+import { TaglitProduct } from "../../Enums/taglit-product.enum.ts";
+import { TaglitOrigin } from "../../Enums/taglit-origin.enum.ts";
 import { HttpClientInstanceInterface } from "../HttpClient/http-client.interface";
 import { AppHttpClient } from "../HttpClient/http-client";
 import { useConfig } from "../../Config/use-config.ts";

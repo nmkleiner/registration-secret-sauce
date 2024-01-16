@@ -1,5 +1,5 @@
 import { reactive, ref } from "vue";
-import { TaglitProduct } from "../API/BaseApi/taglit-product.enum.ts";
+import { TaglitProduct } from "../Enums/taglit-product.enum.ts";
 
 export interface AppConfig {
   VITE_ENVIRONMENT: string;
