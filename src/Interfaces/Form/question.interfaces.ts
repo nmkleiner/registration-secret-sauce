@@ -1,13 +1,13 @@
-import { QuestionOption } from './option.interfaces';
-import { QuestionRule, RuleMessage } from './rule.interfaces';
+import { QuestionOption } from "./option.interfaces";
+import { QuestionRule, RuleMessage } from "./rule.interfaces";
 import {
   OptionCondition,
   SectionOptionCondition,
-} from './option-condition.interfaces';
-import { Address } from './Inputs/address.interface';
-import { RepetitiveQuestionValue } from './Inputs/repetitive-question-value.interface';
-import {RawMedicalCondition} from "../../Types";
-import {QuestionFormat} from "../../Enums";
+} from "./option-condition.interfaces";
+import { Address } from "./Inputs/address.interface";
+import { RepetitiveQuestionValue } from "./Inputs/repetitive-question-value.interface";
+import { RawMedicalCondition } from "../../Types";
+import { Languages, QuestionFormat } from "../../Enums";
 
 export interface BaseRawQuestion {
   id: string;
@@ -74,32 +74,3 @@ export interface FieldMapping {
 export interface RawLanguage {
   name: Languages;
 }
-
-export enum Languages {
-  EnglishWithNumbers = 'EnglishWithNumbers',
-  English = 'English',
-  Hebrew = 'Hebrew',
-  Russian = 'Russian',
-  Spanish = 'Spanish',
-  French = 'French',
-  German = 'German',
-  Portuguese = 'Portuguese',
-  Hungarian = 'Hungarian',
-  Polish = 'Polish',
-}
-
-/*
- * sourced from: https://polish.typeit.org/
- * */
-export const LanguagesRegexes = {
-  EnglishWithNumbers: /^[a-zA-Z0-9 '`"-]+$/,
-  English: /^[(a-zA-Z\s)][a-zA-Z\s]*$/,
-  Hebrew: /[(.אבגדהוזחטיכלמנסעפצקרשתךםןץף\s)]/,
-  Russian: /[(ёъяшертыуиопющэжьлкйчгфдсазхцвбнмЁЯШЕРТЫУИОПЮЩЭЖЬЛКЙЧГФДСАЗХЦВБНМ.\s)]/,
-  Spanish: /[(a-zA-ZñáéíóúüÁÉÍÑÓÚÜ.\s)]/,
-  French: /[(a-zA-ZùûüÿàâæçéèêëïîôœÙÛÜŸÀÂÆÇÉÈÊËÏÎÔŒ.\s)]/,
-  German: /[(a-zA-ZäöüßÄÖÜẞ.\s)]/,
-  Portuguese: /[(a-zA-ZãáàçâéêíõóôúüÃÁÀÂÇÉÊÍÕÓÔÚÜ.\s)]/,
-  Hungarian: /[(a-zA-áéúőóüöÁÉÍÖÓŐÜÚŰ.\s)]/,
-  Polish: /[(a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ.\s)]/,
-};

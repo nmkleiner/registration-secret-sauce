@@ -14,3 +14,4 @@ export * from "./user-lead-type.enum.ts";
 export * from "./taglit-origin.enum.ts";
 export * from "./taglit-product.enum.ts";
 export * from "./taglit-program.enum.ts";
+export * from "./languages.enum.ts";
