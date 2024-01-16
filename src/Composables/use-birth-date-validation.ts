@@ -1,6 +1,7 @@
-import dayjs from "dayjs";
-import { computed, ref } from "vue";
-import { useUserStore } from "../Stores";
+import { useUserStore } from '../Stores/User/user.store';
+import dayjs from 'dayjs';
+import { useCountryStore } from '../Stores/Country/country.store';
+import { UserLeadTypeEnum } from '../Enums/user-lead-type.enum';
 
 const ageInYears = ref(null);
 const ageInDays = ref(null);
@@ -11,28 +12,20 @@ export function useUserAgeValidation() {
   const { min, max, criticalAge } = useUserStore().registrationAgeRange;
 
   const betweenAges = computed(
-    () =>
-      ageInYears.value !== null &&
-      ageInYears.value >= criticalAge &&
-      ageInYears.value < min
+    () => ageInYears.value !== null && ageInYears.value >= criticalAge && ageInYears.value < min,
   );
   const criticalAgeUnderMin = computed(
-    () => ageInYears.value !== null && ageInYears.value < criticalAge
+    () => ageInYears.value !== null && ageInYears.value < criticalAge,
   );
-  const ageOverMax = computed(
-    () => ageInYears.value !== null && ageInYears.value > max
-  );
+  const ageOverMax = computed(() => ageInYears.value !== null && ageInYears.value > max);
   const hasAgeWarning = computed(
-    () => criticalAgeUnderMin.value || ageOverMax.value || betweenAges.value
+    () => criticalAgeUnderMin.value || ageOverMax.value || betweenAges.value,
   );
 
   function handleBirthDateSelected(date: string) {
-    const formattedDateOfBirth = dayjs(
-      date,
-      useCountryStore().dateFormat
-    ).format("YYYY-MM-DD");
-    ageInYears.value = dayjs().diff(formattedDateOfBirth, "year");
-    ageInDays.value = dayjs().diff(formattedDateOfBirth, "day");
+    const formattedDateOfBirth = dayjs(date, useCountryStore().dateFormat).format('YYYY-MM-DD');
+    ageInYears.value = dayjs().diff(formattedDateOfBirth, 'year');
+    ageInDays.value = dayjs().diff(formattedDateOfBirth, 'day');
   }
 
   const isOverMaxAge = (leadType: string | null): boolean => {
@@ -43,9 +36,7 @@ export function useUserAgeValidation() {
     return leadType === UserLeadTypeEnum.betweenAges;
   };
 
-  const isUnderMinPossibleAgeErrorMsg = (
-    errorMessage: string | null = null
-  ): boolean => {
+  const isUnderMinPossibleAgeErrorMsg = (errorMessage: string | null = null): boolean => {
     return errorMessage === UserLeadTypeEnum.underMinPossibleAgeErrorMsg;
   };
 
@@ -56,6 +47,6 @@ export function useUserAgeValidation() {
     betweenAges,
     hasAgeWarning,
     handleBirthDateSelected,
-    isBetweenAgeActive,
+    isBetweenAgeActive
   };
 }

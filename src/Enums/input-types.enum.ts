@@ -19,7 +19,6 @@ export enum ComponentTypes {
   repetitiveQuestion = 'repetitiveQuestion',
   emergencyQuestion = 'emergencyQuestion',
   phoneNumber = 'phoneNumber',
-  textWithFlag = 'textWithFlag',
 }
 
 export enum QuestionTypes {
@@ -46,8 +45,6 @@ export enum QuestionTypes {
   passportScan = 32,
   dropdownWithFlag = 1030,
   phoneNumberInput = 1031,
-  textWithFlag = 1031,
-
 }
 
 export const EXCEL_SAVE_BUTTON_OFF_LIST = ['MyTrip'];

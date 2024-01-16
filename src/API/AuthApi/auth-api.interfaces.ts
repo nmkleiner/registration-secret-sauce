@@ -1,4 +1,4 @@
-// import { LocationQuery } from 'vue-router';
+import { LocationQuery } from 'vue-router';
 
 export interface AuthenticateResponse {
   user: {
@@ -95,7 +95,7 @@ export interface CreateAccountRequestData {
   secondary_email: string;
   country_of_birth: string;
   privacy_signature: string;
-  urlParams: unknown; // LocationQuery;
+  urlParams: LocationQuery;
   mailing_country_code: string;
   to_partner_relation_id: string;
 }
@@ -126,10 +126,4 @@ export interface ControlQuestionsResponse {
   error_id: string;
   error_text: string;
   is_success: boolean;
-}
-
-export interface ControlQuestionReturningApplicant {
-  fieldSet: string;
-  answer: boolean;
-  applicationId: string;
 }

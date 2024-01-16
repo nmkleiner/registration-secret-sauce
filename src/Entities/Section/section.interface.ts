@@ -1,4 +1,4 @@
-import { BasicInput } from "../FormElements";
+import { BasicInput } from '../FormElements';
 
 export interface BaseSectionInterface {
   name: string;

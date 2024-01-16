@@ -1,18 +1,18 @@
-import { InputWithMultiSelect } from "./index";
-import { RawQuestion } from "registration-secret-sauce";
-import { BaseSectionInterface } from "../Section/section.interface";
-import { OptionTransformer } from "../../Transformers/option.transformer";
-import { useDropdownOptionsStore } from "../../../../../../registration-secret-sauce/src/Stores/Stores/DropdownOptions/dropdown-options.store";
-import { CheckboxOption } from "../Options/checkbox-option";
-import { UserInput } from "registration-secret-sauce";
+import { InputWithMultiSelect } from './index';
+import { RawQuestion } from '../../Interfaces/Form/question.interfaces';
+import { BaseSectionInterface } from '../Section/section.interface';
+import { OptionTransformer } from '../../Transformers/option.transformer';
+import { useDropdownOptionsStore } from '../../Stores/DropdownOptions/dropdown-options.store';
+import { CheckboxOption } from '../Options/checkbox-option';
+import { UserInput } from '../../Types/Form/user-input.type';
 import {
   CancelMedical,
   DuplicateCondition,
   MedicalConditionAnswer,
   MedicalDiagnosisUserAnswer,
   RawMedicalCondition,
-} from "registration-secret-sauce";
-import { isEmpty } from "lodash-es";
+} from '../../Types/Form/user-answer.type';
+import { isEmpty } from 'lodash-es';
 
 export class MedicalDiagnosis extends InputWithMultiSelect {
   private readonly values: RawMedicalCondition[];
@@ -41,31 +41,26 @@ export class MedicalDiagnosis extends InputWithMultiSelect {
   buildOptions(rawQuestion: RawQuestion): CheckboxOption[] {
     const questionOptions = OptionTransformer.transformCheckboxOptions(
       rawQuestion.options,
-      rawQuestion.name
+      rawQuestion.name,
     );
-    return [
-      ...questionOptions,
-      ...useDropdownOptionsStore().dbOptions.medicalDiagnoses,
-    ];
+    return [...questionOptions, ...useDropdownOptionsStore().dbOptions.medicalDiagnoses];
   }
 
   getValueForAnswer(): UserInput {
     return super.getValueForAnswer();
   }
 
-  private getMedicalConditionName(
-    medicalCondition: RawMedicalCondition
-  ): string {
+  private getMedicalConditionName(medicalCondition: RawMedicalCondition): string {
     // In the rare case that Form_Id__c is null, we'll use Medical_Condition_Type__c to avoid splitting null
     // Attention - in some cases Medical_Condition_Type__c is not exactly the same string that we expect
     // (For example "Anxiety Or Depression" vs. "Anxiety or depression")
     let medicalConditionName;
 
     if (medicalCondition.Form_Id__c) {
-      const medicalConditionSplit = medicalCondition.Form_Id__c.split("-");
+      const medicalConditionSplit = medicalCondition.Form_Id__c.split('-');
       if (medicalConditionSplit.length > 2) {
         medicalConditionSplit.shift();
-        medicalConditionName = medicalConditionSplit.join("-");
+        medicalConditionName = medicalConditionSplit.join('-');
       } else {
         medicalConditionName = medicalConditionSplit[1];
       }
@@ -83,10 +78,7 @@ export class MedicalDiagnosis extends InputWithMultiSelect {
 
       if (rawMedicalConditionFromSF) {
         if (!this.isSelected(optionValue)) {
-          this.canceledOptionsValues.set(
-            rawMedicalConditionFromSF.Id,
-            optionValue
-          );
+          this.canceledOptionsValues.set(rawMedicalConditionFromSF.Id, optionValue);
         } else {
           this.canceledOptionsValues.delete(rawMedicalConditionFromSF.Id);
         }
@@ -97,8 +89,7 @@ export class MedicalDiagnosis extends InputWithMultiSelect {
   getMedicalConditionItem(value: string): RawMedicalCondition {
     return this.values.find(
       (medicalCondition: RawMedicalCondition) =>
-        this.getMedicalConditionName(medicalCondition).toLowerCase() ===
-        value.toLowerCase()
+        this.getMedicalConditionName(medicalCondition).toLowerCase() === value.toLowerCase(),
     );
   }
 
@@ -114,13 +105,10 @@ export class MedicalDiagnosis extends InputWithMultiSelect {
   }
 
   getMedicalConditions(): MedicalConditionAnswer[] {
-    const medicalDiagnosisValues: string[] = this.getValueForAnswer()
-      .toString()
-      .split(";");
+    const medicalDiagnosisValues: string[] = this.getValueForAnswer().toString().split(';');
     return medicalDiagnosisValues.map((condition: string) => {
       const duplicateValues: DuplicateCondition[][] = [[]];
-      const medicalCondition: RawMedicalCondition =
-        this.getMedicalConditionItem(condition);
+      const medicalCondition: RawMedicalCondition = this.getMedicalConditionItem(condition);
 
       if (medicalCondition) {
         duplicateValues[0].push({ key: this.id, value: medicalCondition.Id });

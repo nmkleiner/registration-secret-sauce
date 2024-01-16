@@ -1,15 +1,15 @@
-import { findLast, keyBy, last } from "lodash-es";
-import { useUserStore } from "../../../../../../registration-secret-sauce/src/Stores/Stores/User/user.store";
-import { BasicInput } from "./index";
-import { UserDocument } from "registration-secret-sauce";
-import { BaseSectionInterface } from "../Section/section.interface";
+import { findLast, keyBy, last } from 'lodash-es';
+import { useUserStore } from '../../Stores/User/user.store';
+import { BasicInput } from './index';
+import { UserDocument } from '../../Interfaces/contact-data.interfaces';
+import { BaseSectionInterface } from '../Section/section.interface';
 import {
   ConsularCheckFileUserAnswer,
   FileUserAnswer,
-} from "registration-secret-sauce";
-import { RawFileType, RawQuestion } from "registration-secret-sauce";
-import { DocumentStatus } from "registration-secret-sauce";
-import { UploadPhase2FilesResponseDto } from "registration-secret-sauce";
+} from '../../Types/Form/user-answer.type';
+import { RawFileType, RawQuestion } from '../../Interfaces/Form/question.interfaces';
+import { DocumentStatus } from '../../Enums/document-status.enum';
+import { UploadPhase2FilesResponseDto } from '../../API/UploadFilesApi/Interfaces/upload-secure-files.response';
 
 export class FileInput extends BasicInput {
   public file: File;
@@ -22,7 +22,7 @@ export class FileInput extends BasicInput {
   constructor(rawQuestion: RawQuestion, formSection: BaseSectionInterface) {
     super(rawQuestion, formSection);
     this.allowedFileTypes = this.getFileTypes(rawQuestion.fileTypes);
-    this.fileTopic = rawQuestion.fileTopic?.name || "no file topic";
+    this.fileTopic = rawQuestion.fileTopic?.name || 'no file topic';
     this.isAdditionalQuestion = rawQuestion.isAdditionalQuestion;
 
     this.loadFileInputData();
@@ -60,19 +60,17 @@ export class FileInput extends BasicInput {
       isPhase2Document: true,
       isPhase2DocumentV2: true,
       fileIndex: this.label.at(-1), // label = 'Document for consular verification #1' => fileIndex = 1
-      value: "",
+      value: '',
       ...this.phase2Fields,
     };
   }
 
-  public setPhase2Fields(
-    uploadFilesResponseDto: UploadPhase2FilesResponseDto
-  ): void {
+  public setPhase2Fields(uploadFilesResponseDto: UploadPhase2FilesResponseDto): void {
     this.phase2Fields = uploadFilesResponseDto;
   }
 
   public get isIsraeliPassport(): boolean {
-    return this.objectName === "israel_passport";
+    return this.objectName === 'israel_passport';
   }
 
   public isValidFileType(uploadedFile: File): boolean {
@@ -83,7 +81,7 @@ export class FileInput extends BasicInput {
       return true;
     }
     return this.allowedFileTypes.some(
-      (fileType) => `.${last(uploadedFile.name.split("."))}` === fileType
+      (fileType) => `.${last(uploadedFile.name.split('.'))}` === fileType,
     );
   }
 
@@ -92,7 +90,7 @@ export class FileInput extends BasicInput {
   }
 
   private get allFileTypesAllowed() {
-    return this.allowedFileTypes.includes(".all");
+    return this.allowedFileTypes.includes('.all');
   }
 
   private getFileTypes(fileTypes: RawFileType[]): string[] {
@@ -106,10 +104,7 @@ export class FileInput extends BasicInput {
       return;
     }
 
-    const documents = keyBy(
-      useUserStore().contactDocuments,
-      (document) => document.type
-    );
+    const documents = keyBy(useUserStore().contactDocuments, (document) => document.type);
     if (documents) {
       const documentData: UserDocument = documents[this.fileTopic];
 
@@ -131,8 +126,7 @@ export class FileInput extends BasicInput {
 
     const documentForCurrentField = findLast(
       documents,
-      (document) =>
-        document.fileIndex && document.fileIndex === String(this.label.at(-1))
+      (document) => document.fileIndex && document.fileIndex === String(this.label.at(-1)),
     );
 
     if (documentForCurrentField) {
@@ -143,11 +137,8 @@ export class FileInput extends BasicInput {
   private evaluateAdditionalQuestionVisibility(): void {
     if (!this.isAdditionalQuestion) return;
 
-    const document = useUserStore()?.contactDocuments.find(
-      (doc) => doc.type === this.fileTopic
-    );
+    const document = useUserStore()?.contactDocuments.find((doc) => doc.type === this.fileTopic);
 
-    this.isVisible =
-      !!document && document.documentStatus !== DocumentStatus.NotRequired;
+    this.isVisible = !!document && document.documentStatus !== DocumentStatus.NotRequired;
   }
 }

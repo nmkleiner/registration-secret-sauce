@@ -1,0 +1,111 @@
+@import 'src/assets/style/abstract/colors';
+@import 'src/assets/style/abstract/breakpoints';
+@import 'src/assets/style/abstract/onward-field';
+@import 'src/assets/style/abstract/hint';
+
+.textField {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+
+  @include tablet {
+    &.address {
+      margin-bottom: 24px;
+    }
+  }
+
+  .inputWrapper {
+    position: relative;
+
+    .icons {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+    }
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    height: 100%;
+    padding: 15px 16px 13px;
+    border-radius: 6px;
+    border: none;
+    background-color: $gray;
+    color: $dark-blue;
+    font-size: 14px;
+    font-family: NexaRegular, sans-serif;
+    resize: none;
+
+    &::placeholder {
+      color: $dark-gray;
+      font-family: NexaRegular, sans-serif;
+    }
+
+    &.readonly {
+      cursor: default;
+    }
+
+    &.hasPrefix {
+      padding-left: 65px;
+    }
+  }
+
+  .prefix {
+    position: absolute;
+    bottom: 13px;
+    left: 15px;
+    font-size: 14px;
+    color: $dark-blue;
+  }
+
+  &.readonly {
+    opacity: $readonly-opacity;
+  }
+
+  .hintWrapper {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+
+    @include phone {
+      flex-direction: column;
+    }
+
+    .hint {
+      @include hint;
+    }
+  }
+
+  .messageWrapper {
+    line-height: 0.6;
+    text-align: left;
+
+    &.underGoogleAddress {
+      .error {
+        bottom: -22px;
+      }
+    }
+  }
+
+  &.onward {
+    input,
+    textarea {
+      @include onward-field;
+
+      &.hasPrefix {
+        padding-left: 105px;
+      }
+    }
+
+    .hint {
+      color: $onward-label;
+    }
+
+    .prefix {
+      left: 55px;
+      color: $dark-gray-text;
+    }
+  }
+}

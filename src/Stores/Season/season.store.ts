@@ -1,10 +1,10 @@
-import { defineStore } from "pinia";
-import { SeasonState } from "./season-state.interface";
-import { useCountryStore } from "../Country/country.store";
-import FormBuilderApi from "../../API/FormBuilderApi/form-builder.api.ts";
-import { SeasonSetting } from "../../Interfaces";
+import { defineStore } from 'pinia';
+import { SeasonState } from './season-state.interface';
+import { SeasonSetting } from '../../Interfaces/season-setting.interface';
+import { FormBuilderApi } from '../../API';
+import { useCountryStore } from '../Country/country.store';
 
-export const useSeasonStore = defineStore("Season", {
+export const useSeasonStore = defineStore('Season', {
   state: (): SeasonState => ({
     // selectedSeason: null,
     availableSeasons: null,
@@ -14,9 +14,7 @@ export const useSeasonStore = defineStore("Season", {
   actions: {
     async getAvailableSeasons() {
       const { productCountryIsoCode: countryIsoCode } = useCountryStore();
-      this.availableSeasons = await FormBuilderApi.getAvailableSeasons(
-        countryIsoCode
-      );
+      this.availableSeasons = await FormBuilderApi.getAvailableSeasons(countryIsoCode);
     },
     setApplicationSeason(applicationSeason: SeasonSetting) {
       this.applicationSeason = applicationSeason;

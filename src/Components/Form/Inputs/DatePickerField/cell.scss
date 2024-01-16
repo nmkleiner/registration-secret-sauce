@@ -1,0 +1,24 @@
+@import 'src/assets/style/abstract/colors';
+
+.cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  font-size: 14px;
+  font-family: NexaRegular, sans-serif;
+  color: $dark-blue;
+  transition: 50ms;
+
+  &.disabled {
+    opacity: 0.4;
+  }
+
+  &:hover,&.selected {
+    &:not(.disabled) {
+      background-color: $bright-azure;
+      color: $white;
+    }
+  }
+}

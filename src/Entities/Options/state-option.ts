@@ -1,6 +1,6 @@
-import { RawStateOption } from "registration-secret-sauce";
-import { OptionInterface } from "registration-secret-sauce";
-import { IsVisible } from "../BaseClasses/is-visible";
+import { RawStateOption } from '../../Interfaces/raw-state-option.interface';
+import { OptionInterface } from '../../Interfaces/Form/Inputs/option.interface';
+import { IsVisible } from '../BaseClasses/is-visible';
 
 export class StateOption extends IsVisible implements OptionInterface {
   public id: string;

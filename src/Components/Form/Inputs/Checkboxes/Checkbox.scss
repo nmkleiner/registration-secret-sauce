@@ -1,0 +1,103 @@
+@import 'src/assets/style/abstract/colors';
+
+.checkbox {
+  display: flex;
+  justify-content: flex-start;
+
+  label {
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+
+    input {
+      opacity: 0;
+      display: none;
+    }
+
+    .customCheckbox {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 23px;
+      min-width: 23px;
+      background-color: $gray;
+      border-radius: 5px;
+      transition: all 0.3s ease-out;
+      border: 2px solid $white;
+
+      &::after {
+        content: '';
+        transition: all 0.3s ease-out;
+      }
+    }
+
+    input:focus {
+      &.checked {
+        border: 2px solid gray;
+      }
+
+      &:not(.checked) {
+        border: 2px solid $azure;
+      }
+    }
+  }
+
+  &.readonly {
+    label {
+      cursor: default;
+    }
+
+    opacity: $readonly-opacity;
+  }
+
+  .checkboxLabel {
+    input:checked ~ .customCheckbox {
+      background-color: $azure;
+
+      &::after {
+        transform: rotate(45deg) scale(1);
+        opacity: 1;
+        width: 3px;
+        height: 8px;
+        border: solid $white;
+        border-width: 0 2px 2px 0;
+        background-color: transparent;
+        border-radius: 0;
+        margin-bottom: 2px;
+      }
+    }
+  }
+
+  .label {
+    margin-left: 12px;
+    text-align: left;
+    display: inline-block;
+    font-size: 14px;
+
+    &.checked {
+      color: $dark-blue;
+    }
+  }
+
+  &.onward {
+    font-size: 14px;
+    color: $dark-gray-text;
+
+    .checkboxLabel {
+      .label {
+        font-size: 14px;
+        color: $dark-gray-text;
+      }
+
+      .customCheckbox {
+        background-color: transparent;
+        border: 1px solid $bright-gray;
+      }
+    }
+
+    .checkboxLabel input:checked ~ .customCheckbox {
+      background-color: $onward-orange;
+    }
+  }
+}

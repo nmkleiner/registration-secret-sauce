@@ -1,4 +1,5 @@
-import { LocationQuery } from "vue-router";
+import { RegistrationTab } from '../../Entities/Tab/registration-tab';
+import { LocationQuery } from 'vue-router';
 
 export interface FormNavigationState {
   EXCEL: {

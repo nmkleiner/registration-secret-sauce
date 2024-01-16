@@ -1,18 +1,28 @@
-import { defineStore } from "pinia";
-import { useApplicationStore } from "../Application/application.store";
-import { FormNavigationState } from "./form-navigation-state.interface";
+import { defineStore } from 'pinia';
+import router from '../../Router';
+import { FormSection } from '../../Entities/Section';
+import { useProduct } from '../../../../excel-registration-front/src/Core/Composables/program/useProduct';
+import { TaglitProduct } from '../../../../excel-registration-front/src/Core/Infrastructure/API/taglit-product.enum';
+import { RegistrationTab } from '../../Entities/Tab/registration-tab';
+import { ExcelSectionNames } from '../../../../excel-registration-front/src/Modules/Excel/Enums/excel-section-names.enum';
+import { RawFormSection } from '../../Interfaces/Form/section.interfaces';
+import { useApplicationStore } from '../Application/application.store';
+import { registrationTabFactory } from '../../Factories/registration-tab.factory';
+import { RegistrationStage } from '../../Interfaces/Form/registration.stage.interface';
+import { FormNavigationState } from './form-navigation-state.interface';
 import {
   handleSectionSave,
   handleSectionSaveOnward,
   setSelectedTab,
-} from "./helpers";
-import { usePaymentStore } from "../Payment/payment.store";
-import { useConfig } from "../../Config/use-config.ts";
-import { TaglitProduct } from "../../Enums";
-import { RawFormSection, RegistrationStage } from "../../Interfaces";
-import { useProgramStore } from "../Program/program.store.ts";
+} from './helpers';
+import { useProgramStore } from '../../../../excel-registration-front/src/Modules/Onward/Store/Program/program.store';
+import { isMyProgramsTab } from '../../../../excel-registration-front/src/Modules/Onward/Helpers/is-my-programs-tab';
+import { OnwardSectionNames } from '../../../../excel-registration-front/src/Modules/Onward/Enums/onward-section-names.enum';
+import { usePaymentStore } from '../Payment/payment.store';
+import { isSubmitSection } from '../../../../excel-registration-front/src/Modules/Excel/Entities/Section/Helpers/is-submit-section';
+import { isCompletedTabsBeforeCurrentTab } from '../../../../excel-registration-front/src/Modules/Onward/Helpers/is-completed-tabs-before-current-tab';
 
-export const useFormNavigationStore = defineStore("FormNavigation", {
+export const useFormNavigationStore = defineStore('FormNavigation', {
   state: (): FormNavigationState => ({
     EXCEL: {
       phase1Tabs: [],
@@ -22,11 +32,11 @@ export const useFormNavigationStore = defineStore("FormNavigation", {
       tabs: [],
     },
     queryParams: {},
-    fullLoginUrl: "",
+    fullLoginUrl: '',
   }),
   getters: {
     tabs(): RegistrationTab[] {
-      const product = useConfig().getProduct();
+      const product = useProduct().product.value;
       switch (product) {
         case TaglitProduct.EXCEL:
           return useApplicationStore().activePhase === 1
@@ -42,22 +52,18 @@ export const useFormNavigationStore = defineStore("FormNavigation", {
     allSections(): FormSection[] {
       return this.tabs.reduce((acc, tab) => [...acc, ...tab.sections], []);
     },
-    getSectionByUniqueName(): (
-      uniqueName: SectionNames | OnwardSectionNames
-    ) => FormSection {
-      return (uniqueName: SectionNames | OnwardSectionNames): FormSection => {
-        return this.allSections.find(
-          (section) => section.uniqueName === uniqueName
-        );
+    getSectionByUniqueName(): (uniqueName: ExcelSectionNames | OnwardSectionNames) => FormSection {
+      return (uniqueName: ExcelSectionNames | OnwardSectionNames): FormSection => {
+        return this.allSections.find((section) => section.uniqueName === uniqueName);
       };
     },
     getSectionIndexInTabByUniqueName(): (
-      uniqueName: SectionNames,
-      indexTab: number
+      uniqueName: ExcelSectionNames,
+      indexTab: number,
     ) => number {
-      return (uniqueName: SectionNames, indexTab: number): number => {
+      return (uniqueName: ExcelSectionNames, indexTab: number): number => {
         return this.tabs[indexTab].sections.findIndex(
-          (section) => section.uniqueName === uniqueName
+          (section) => section.uniqueName === uniqueName,
         );
       };
     },
@@ -67,34 +73,27 @@ export const useFormNavigationStore = defineStore("FormNavigation", {
   },
   actions: {
     initParams() {
-      this.queryParams = {
-        ...this.queryParams,
-        ...router.currentRoute.value.query,
-      };
-      if (useConfig().getProduct() === "ONWARD") {
+      this.queryParams = { ...this.queryParams, ...router.currentRoute.value.query };
+      if (useProduct().isOnward.value) {
         const { tripid, org, partner } = this.queryParams;
-        const { setProgramUrlParam, setOrgUrlParam, setPartnerUrlParam } =
-          useProgramStore();
+        const { setProgramUrlParam, setOrgUrlParam, setPartnerUrlParam } = useProgramStore();
 
         tripid
           ? setProgramUrlParam(String(tripid))
-          : useProgramStore().clearUrlFromLocalStorage("programUrlParam");
+          : useProgramStore().clearUrlFromLocalStorage('programUrlParam');
         org
           ? setOrgUrlParam(String(org))
-          : useProgramStore().clearUrlFromLocalStorage("organizerUrlParam");
+          : useProgramStore().clearUrlFromLocalStorage('organizerUrlParam');
         partner
           ? setPartnerUrlParam(String(partner))
-          : useProgramStore().clearUrlFromLocalStorage("partnerUrlParam");
+          : useProgramStore().clearUrlFromLocalStorage('partnerUrlParam');
       }
     },
     initFullLoginUrl() {
       this.fullLoginUrl = window.location.href;
     },
-    initNavigation(
-      registrationStages: RegistrationStage[],
-      rawFormSections: RawFormSection[]
-    ) {
-      const program = useConfig().getProduct();
+    initNavigation(registrationStages: RegistrationStage[], rawFormSections: RawFormSection[]) {
+      const program = useProduct().product.value;
       switch (program) {
         case TaglitProduct.EXCEL:
           this.initExcelTabs(registrationStages, rawFormSections);
@@ -135,46 +134,26 @@ export const useFormNavigationStore = defineStore("FormNavigation", {
       const initialTab = this.tabs.find((tab) => !tab.completed);
       if (initialTab) {
         this.setSelectedTab(initialTab);
-        const incompleteSection = initialTab.sections.find(
-          (section) => !section.isCompleted
-        );
+        const incompleteSection = initialTab.sections.find((section) => !section.isCompleted);
         if (incompleteSection) incompleteSection.open().scrollToSection();
       }
     },
-    initExcelTabs(
-      stages: RegistrationStage[],
-      rawFormSections: RawFormSection[]
-    ) {
-      const phase1Sections = rawFormSections.filter(
-        (section) => section.registrationPhase === 1
-      );
+    initExcelTabs(stages: RegistrationStage[], rawFormSections: RawFormSection[]) {
+      const phase1Sections = rawFormSections.filter((section) => section.registrationPhase === 1);
       const phase1Stages = stages.filter((stage) => stage.phase === 1);
-      this.EXCEL.phase1Tabs = registrationTabFactory(
-        phase1Stages,
-        phase1Sections
-      );
+      this.EXCEL.phase1Tabs = registrationTabFactory(phase1Stages, phase1Sections);
 
-      const phase2Sections = rawFormSections.filter(
-        (stage) => stage.registrationPhase === 2
-      );
+      const phase2Sections = rawFormSections.filter((stage) => stage.registrationPhase === 2);
       const phase2Stages = stages.filter((stage) => stage.phase === 2);
-      this.EXCEL.phase2Tabs = registrationTabFactory(
-        phase2Stages,
-        phase2Sections
-      );
+      this.EXCEL.phase2Tabs = registrationTabFactory(phase2Stages, phase2Sections);
     },
-    initOnwardTabs(
-      stages: RegistrationStage[],
-      rawFormSections: RawFormSection[]
-    ) {
+    initOnwardTabs(stages: RegistrationStage[], rawFormSections: RawFormSection[]) {
       const setProgramTabStatus = () => {
         const myProgramTab = this.tabs.find(isMyProgramsTab);
 
         if (myProgramTab) {
           myProgramTab.completed = true;
-          const nextTab = this.tabs.find(
-            (tab) => tab.order === myProgramTab.order + 1
-          );
+          const nextTab = this.tabs.find((tab) => tab.order === myProgramTab.order + 1);
 
           if (nextTab) {
             nextTab.isLocked = false;
@@ -194,7 +173,7 @@ export const useFormNavigationStore = defineStore("FormNavigation", {
      * */
     handleGoToProgramParam(): boolean {
       const goToProgramParam = this.queryParams.go_to_program;
-      if (typeof goToProgramParam !== "string") {
+      if (typeof goToProgramParam !== 'string') {
         return false;
       }
 
@@ -211,13 +190,13 @@ export const useFormNavigationStore = defineStore("FormNavigation", {
      * */
     handleGoToParam(): boolean {
       const goToParam = this.queryParams.goto;
-      if (typeof goToParam !== "string") {
+      if (typeof goToParam !== 'string') {
         return false;
       }
 
       const param = goToParam.toLowerCase();
       const section = this.allSections.find(
-        (section) => section.uniqueName.toLowerCase() === param
+        (section) => section.uniqueName.toLowerCase() === param,
       );
       if (!section) {
         return false;
@@ -244,7 +223,7 @@ export const useFormNavigationStore = defineStore("FormNavigation", {
 
       // If the application is at phase 2 - open the Consular Checks section
       const consularChecksSection = this.allSections.find(
-        (section) => section.uniqueName === OnwardSectionNames.consularChecks
+        (section) => section.uniqueName === OnwardSectionNames.consularChecks,
       );
       const consularChecksSectionTab = consularChecksSection.tab;
 
@@ -265,10 +244,8 @@ export const useFormNavigationStore = defineStore("FormNavigation", {
       const allowPayment = usePaymentStore().allowPayment;
       const paymentStatus = usePaymentStore().status;
 
-      if (allowPayment && paymentStatus === "Unpaid") {
-        const submitSection = this.allSections?.find((section) =>
-          isSubmitSection(section)
-        );
+      if (allowPayment && paymentStatus === 'Unpaid') {
+        const submitSection = this.allSections?.find((section) => isSubmitSection(section));
         const submitSectionTab = submitSection?.tab;
         this.setSelectedTab(submitSectionTab);
         submitSection.open().scrollToSection();
@@ -295,11 +272,11 @@ export const useFormNavigationStore = defineStore("FormNavigation", {
      * called on init and on form save
      * */
     evaluateOnwardTabsLockStatus() {
-      if (useConfig().getProduct() === "ONWARD") {
+      if (useProduct().isOnward.value) {
         const { hasIneligibleError } = useApplicationStore();
         this.tabs.forEach((tab, index) => {
           const previousTab = this.tabs[index - 1];
-          if (tab.uniqueName === "Travel (O)" && hasIneligibleError) {
+          if (tab.uniqueName === 'Travel (O)' && hasIneligibleError) {
             // Prevent unlocking the Travel for ineligible applicant
             tab.lock();
             return;
@@ -336,7 +313,7 @@ export const useFormNavigationStore = defineStore("FormNavigation", {
       const selectedTab = this.selectedTab;
       const tabs = this.tabs;
 
-      useConfig().getProduct() === "ONWARD"
+      useProduct().isOnward.value
         ? handleSectionSaveOnward(formSection, selectedTab, tabs)
         : handleSectionSave(formSection, selectedTab, tabs);
     },
@@ -377,14 +354,14 @@ export const useFormNavigationStore = defineStore("FormNavigation", {
       this.setSelectedTab(this.tabs[index]);
     },
     cleanState() {
-      if (useConfig().getProduct() === "ONWARD") {
+      if (useProduct().isOnward.value) {
         this.ONWARD.tabs = [];
       } else {
         this.EXCEL.phase1Tabs = [];
         this.EXCEL.phase2Tabs = [];
       }
       this.queryParams = {};
-      this.fullLoginUrl = "";
+      this.fullLoginUrl = '';
     },
   },
 });

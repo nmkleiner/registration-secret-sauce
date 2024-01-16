@@ -1,12 +1,12 @@
-import { BasicInput } from "./index";
-import { RawQuestion } from "registration-secret-sauce";
-import { useFormatDates } from "../../../../excel-registration-front/src/Core/Composables/dayJs/useFormatDates";
-import { useCountryStore } from "../../../../../../registration-secret-sauce/src/Stores/Stores/Country/country.store";
-import { BaseSectionInterface } from "../Section/section.interface";
-import { AppDate } from "registration-secret-sauce";
-import z from "zod";
-import dayjs from "dayjs";
-import { last } from "lodash-es";
+import { BasicInput } from './index';
+import { RawQuestion } from '../../Interfaces/Form/question.interfaces';
+import { useFormatDates } from '../../../../excel-registration-front/src/Core/Composables/dayJs/useFormatDates';
+import { useCountryStore } from '../../Stores/Country/country.store';
+import { BaseSectionInterface } from '../Section/section.interface';
+import { AppDate } from '../../Interfaces/Form/Inputs/app-date.interface';
+import z from 'zod';
+import dayjs from 'dayjs';
+import { last } from 'lodash-es';
 
 const { formatDate } = useFormatDates();
 
@@ -14,10 +14,10 @@ export class DateInput extends BasicInput {
   public datePickerOpen = false;
   public monthListOpen = false;
   public yearListOpen = false;
-  public selectedDate: AppDate = { month: "", year: "", day: "" };
+  public selectedDate: AppDate = { month: '', year: '', day: '' };
   public months = this.initializeMonths();
   public years = this.initializeYears();
-  private salesforceFormat = "YYYY-MM-DD";
+  private salesforceFormat = 'YYYY-MM-DD';
   private displayFormat = useCountryStore().dateFormat;
 
   constructor(rawQuestion: RawQuestion, formSection: BaseSectionInterface) {
@@ -38,13 +38,13 @@ export class DateInput extends BasicInput {
 
   public get displayValue(): string {
     if (!this.selectedDate.day) {
-      return "";
+      return '';
     }
 
     return formatDate(
       `${this.selectedDate.year}-${this.selectedDate.month}-${this.selectedDate.day}`,
-      "YYYY-M-D",
-      this.displayFormat
+      'YYYY-M-D',
+      this.displayFormat,
     );
   }
 
@@ -79,16 +79,12 @@ export class DateInput extends BasicInput {
 
   public get firstMonthInRange(): boolean {
     const firstMonth = this.months[0];
-    return (
-      this.selectedDate.month === String(firstMonth) && this.firstYearInRange
-    );
+    return this.selectedDate.month === String(firstMonth) && this.firstYearInRange;
   }
 
   public get lastMonthInRange(): boolean {
     const lastMonth = dayjs().month() + 1;
-    return (
-      this.selectedDate.month === String(lastMonth) && this.lastYearInRange
-    );
+    return this.selectedDate.month === String(lastMonth) && this.lastYearInRange;
   }
 
   public updateSelectedDate(date: AppDate) {
@@ -98,37 +94,29 @@ export class DateInput extends BasicInput {
     if (date.month && z.string().max(2).parse(date.month)) {
       this.selectedDate.month = date.month;
     }
-    if ((date.day && z.string().max(2).parse(date.day)) || date.day === "") {
+    if ((date.day && z.string().max(2).parse(date.day)) || date.day === '') {
       this.selectedDate.day = date.day;
     }
-    if (
-      this.selectedDate.year &&
-      this.selectedDate.month &&
-      this.selectedDate.day
-    ) {
+    if (this.selectedDate.year && this.selectedDate.month && this.selectedDate.day) {
       this.value = this.displayValue;
     }
   }
 
   private transformToAppDate(value: string): AppDate {
     if (!value) {
-      return {
-        month: dayjs().format("M"),
-        year: dayjs().format("YYYY"),
-        day: "",
-      }; // today's date
+      return { month: dayjs().format('M'), year: dayjs().format('YYYY'), day: '' }; // today's date
     }
 
     return {
-      year: formatDate(value, this.salesforceFormat, "YYYY"),
-      month: formatDate(value, this.salesforceFormat, "M"),
-      day: formatDate(value, this.salesforceFormat, "D"),
+      year: formatDate(value, this.salesforceFormat, 'YYYY'),
+      month: formatDate(value, this.salesforceFormat, 'M'),
+      day: formatDate(value, this.salesforceFormat, 'D'),
     };
   }
 
   private transformDateFormat(value: string): string {
     if (!value) {
-      return "";
+      return '';
     }
 
     return formatDate(value, this.salesforceFormat, this.displayFormat);
@@ -138,10 +126,7 @@ export class DateInput extends BasicInput {
     const startYear = new Date().getFullYear() - 100;
     const endYear = new Date().getFullYear() + 50;
 
-    return Array.from(
-      { length: endYear - startYear + 1 },
-      (_, i) => i + startYear
-    );
+    return Array.from({ length: endYear - startYear + 1 }, (_, i) => i + startYear);
   }
   private initializeMonths(): number[] {
     return Array.from({ length: 12 }, (_, i) => i + 1);

@@ -3,20 +3,20 @@ import {
   getRulesByQuestionFormat,
   getRulesByQuestionRules,
   getRulesByQuestionUniqueName,
-} from "../../../../excel-registration-front/src/Core/Validation/assign-validation-rules";
-import { QuestionFormat } from "registration-secret-sauce";
+} from '../../../../excel-registration-front/src/Core/Validation/assign-validation-rules';
+import { QuestionFormat } from '../../Enums/question-format.enum';
+import { Rules, ValidationRules } from '../../../../excel-registration-front/src/Core/Validation/rules';
+import { UserInput } from '../../Types/Form/user-input.type';
+import { ComponentTypes, QuestionTypes } from '../../Enums/input-types.enum';
+import { UserAnswer } from '../../Types/Form/user-answer.type';
+import { BaseSectionInterface } from '../Section/section.interface';
 import {
-  Rules,
-  ValidationRules,
-} from "../../../../excel-registration-front/src/Core/Validation/rules";
-import { UserInput } from "registration-secret-sauce";
-import { ComponentTypes, QuestionTypes } from "registration-secret-sauce";
-import { UserAnswer } from "registration-secret-sauce";
-import { BaseSectionInterface } from "../Section/section.interface";
-import { LocalRawQuestion, RawQuestion } from "registration-secret-sauce";
-import { useProduct } from "../../../../excel-registration-front/src/Core/Composables/program/useProduct";
-import { OnwardQuestionUniqueNames } from "@/Modules/Onward/Enums/onward-question-names.enum";
-import { IsVisible } from "../BaseClasses/is-visible";
+  LocalRawQuestion,
+  RawQuestion,
+} from '../../Interfaces/Form/question.interfaces';
+import { useProduct } from '../../../../excel-registration-front/src/Core/Composables/program/useProduct';
+import { OnwardQuestionUniqueNames } from '../../../../excel-registration-front/src/Modules/Onward/Enums/onward-question-names.enum';
+import { IsVisible } from '../BaseClasses/is-visible';
 
 export class BasicInput extends IsVisible {
   id: string;
@@ -26,7 +26,7 @@ export class BasicInput extends IsVisible {
   questionFormatName: string;
   uniqueName: string;
   fieldName: string;
-  objectName: "israel_passport" | string;
+  objectName: 'israel_passport' | string;
   columns: number;
   sectionColumns: number;
   sectionName: string;
@@ -42,10 +42,7 @@ export class BasicInput extends IsVisible {
 
   setErrors: (message: string | string[]) => void;
 
-  constructor(
-    rawQuestion: RawQuestion | LocalRawQuestion,
-    formSection: BaseSectionInterface
-  ) {
+  constructor(rawQuestion: RawQuestion | LocalRawQuestion, formSection: BaseSectionInterface) {
     super();
     this.id = rawQuestion.id;
     this.hint = rawQuestion.hint;
@@ -53,17 +50,13 @@ export class BasicInput extends IsVisible {
     this.label = rawQuestion.name?.trim();
 
     this.questionFormat = rawQuestion.format ? rawQuestion.format.id : null;
-    this.questionFormatName = rawQuestion.format
-      ? rawQuestion.format.name
-      : "no format";
+    this.questionFormatName = rawQuestion.format ? rawQuestion.format.name : 'no format';
 
     this.questionType = rawQuestion.type ? rawQuestion.type.id : null;
-    this.questionTypeName = rawQuestion.type
-      ? rawQuestion.type.name
-      : "no type";
+    this.questionTypeName = rawQuestion.type ? rawQuestion.type.name : 'no type';
 
     this.sectionColumns = formSection.columns || 1;
-    this.sectionName = formSection.name || "no section name";
+    this.sectionName = formSection.name || 'no section name';
     this.columns = rawQuestion.displayColumnNumber || this.sectionColumns;
     this.value = this.getValue(rawQuestion);
     this.uniqueName = this.getUniqueName(rawQuestion);
@@ -81,9 +74,9 @@ export class BasicInput extends IsVisible {
 
   public getAnswer(): UserAnswer {
     const value = this.getValueForAnswer();
-    const noMapping = this.fieldName === "no mapping";
+    const noMapping = this.fieldName === 'no mapping';
     if (noMapping) {
-      console.warn("No mapping for question", this.label);
+      console.warn('No mapping for question', this.label);
       return null;
     }
     if (!value) {
@@ -104,10 +97,7 @@ export class BasicInput extends IsVisible {
   }
 
   public getValue(rawQuestion: RawQuestion): string {
-    if (
-      typeof rawQuestion.value === "string" ||
-      typeof rawQuestion.value === "boolean"
-    ) {
+    if (typeof rawQuestion.value === 'string' || typeof rawQuestion.value === 'boolean') {
       return rawQuestion.value;
     }
     return null;
@@ -122,7 +112,7 @@ export class BasicInput extends IsVisible {
   }
 
   private getReadonly(rawQuestion: RawQuestion | LocalRawQuestion): boolean {
-    if ("readonly" in rawQuestion) {
+    if ('readonly' in rawQuestion) {
       return rawQuestion.readonly;
     }
 
@@ -131,7 +121,7 @@ export class BasicInput extends IsVisible {
 
   private getComponentType(rawQuestion: RawQuestion): ComponentTypes {
     if (!this.questionType) {
-      console.warn("Missing question type", rawQuestion);
+      console.warn('Missing question type', rawQuestion);
       return ComponentTypes.textField;
     }
 
@@ -141,8 +131,7 @@ export class BasicInput extends IsVisible {
       return formatComponentType;
     }
 
-    const uniqueNameComponentType =
-      this.getComponentTypeByUniqueName(rawQuestion);
+    const uniqueNameComponentType = this.getComponentTypeByUniqueName(rawQuestion);
 
     if (uniqueNameComponentType) {
       return uniqueNameComponentType;
@@ -158,9 +147,7 @@ export class BasicInput extends IsVisible {
     }
   }
 
-  private getComponentTypeByUniqueName(
-    rawQuestion: RawQuestion
-  ): ComponentTypes {
+  private getComponentTypeByUniqueName(rawQuestion: RawQuestion): ComponentTypes {
     const uniqueName = rawQuestion.fieldMapping
       ? rawQuestion.fieldMapping[0]?.uniqueName || null
       : null;
@@ -177,9 +164,7 @@ export class BasicInput extends IsVisible {
     }
   }
 
-  private getComponentTypeByQuestionType(
-    rawQuestion: RawQuestion
-  ): ComponentTypes {
+  private getComponentTypeByQuestionType(rawQuestion: RawQuestion): ComponentTypes {
     switch (this.questionType) {
       case QuestionTypes.address:
         return ComponentTypes.googleAddress;
@@ -239,7 +224,7 @@ export class BasicInput extends IsVisible {
         return ComponentTypes.passportScan;
 
       default:
-        console.warn("Unknown question type", rawQuestion);
+        console.warn('Unknown question type', rawQuestion);
         return ComponentTypes.textField;
     }
   }
@@ -248,11 +233,11 @@ export class BasicInput extends IsVisible {
     switch (this.questionFormat) {
       //  removed the phone because we cannot predict how many digits the user will enter
       case QuestionFormat.date:
-        return "##/##/####";
+        return '##/##/####';
       case QuestionFormat.phone:
-        return useProduct().isOnward.value ? "###-###-######" : "";
+        return useProduct().isOnward.value ? '###-###-######' : '';
       default:
-        return "";
+        return '';
     }
   }
 
@@ -272,30 +257,27 @@ export class BasicInput extends IsVisible {
 
   private getUniqueName(rawQuestion: RawQuestion): string {
     if (!rawQuestion.fieldMapping || !rawQuestion.fieldMapping.length) {
-      return "no mapping";
+      return 'no mapping';
     }
-    return (
-      rawQuestion.fieldMapping[0].uniqueName ||
-      rawQuestion.fieldMapping[0].fieldName
-    ); // for data-qa-id
+    return rawQuestion.fieldMapping[0].uniqueName || rawQuestion.fieldMapping[0].fieldName; // for data-qa-id
   }
 
   private getFieldName(rawQuestion: RawQuestion): string {
     if (!rawQuestion.fieldMapping || !rawQuestion.fieldMapping.length) {
-      return "no mapping";
+      return 'no mapping';
     }
-    return rawQuestion.fieldMapping[0].fieldName || "no mapping";
+    return rawQuestion.fieldMapping[0].fieldName || 'no mapping';
   }
 
   private getObjectName(rawQuestion: RawQuestion): string {
     if (!rawQuestion.fieldMapping || !rawQuestion.fieldMapping.length) {
-      return "no mapping";
+      return 'no mapping';
     }
-    return rawQuestion.fieldMapping[0].objectName || "no mapping";
+    return rawQuestion.fieldMapping[0].objectName || 'no mapping';
   }
 
   public resetValue(): void {
-    this.value = "";
+    this.value = '';
   }
 
   public fillInput(value: string): void {
@@ -306,10 +288,10 @@ export class BasicInput extends IsVisible {
 
   private getKey(): string {
     if (this.isClone) {
-      const splitId = this.id.split("-");
+      const splitId = this.id.split('-');
       splitId.pop();
 
-      return splitId.join("-");
+      return splitId.join('-');
     } else {
       return this.id;
     }

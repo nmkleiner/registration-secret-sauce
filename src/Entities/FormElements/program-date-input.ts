@@ -1,33 +1,33 @@
-import dayjs from "dayjs";
-import { i18n } from "../../../../excel-registration-front/src/Core/Translations/vue-i18n";
-import { Program } from "registration-secret-sauce";
-import { AppDate } from "registration-secret-sauce";
+import dayjs from 'dayjs';
+import { i18n } from '../../../../excel-registration-front/src/Core/Translations/vue-i18n';
+import { Program } from '../../../../excel-registration-front/src/Modules/Onward/Interfaces/program.interface';
+import { AppDate } from '../../Interfaces/Form/Inputs/app-date.interface';
 
 export class ProgramDateInput {
   public monthNames = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
   ];
-  public inputTitle = i18n.global.t("programTab.startDateTitle");
+  public inputTitle = i18n.global.t('programTab.startDateTitle');
   public datePickerOpen = false;
   public availablePrograms = [] as Program[];
   public sortedAvailableDates = [] as string[];
   public sortedAvailableMonths = ({} = new Set<number>());
   public sortedAvailableYears = ({} = new Set<number>());
-  public currentDate: AppDate = { month: "", year: "", day: "" };
+  public currentDate: AppDate = { month: '', year: '', day: '' };
   public lockPrevious = true;
   public lockNext = false;
-  public selectedDate = "";
+  public selectedDate = '';
   public availableDaysInCurrentMonth = [] as number[];
   public readonly = false;
 
@@ -65,61 +65,56 @@ export class ProgramDateInput {
     this.lockPrevious = true;
     this.lockNext = true;
     this.availableDaysInCurrentMonth = this.availableDaysInCurrentMonth.filter(
-      (day) => day.toString() === selectedDay
+      (day) => day.toString() === selectedDay,
     );
   }
 
   public getCurrentDateLabel(): string {
-    return `${this.monthNames[Number(this.currentDate.month) - 1]}, ${
-      this.currentDate.year
-    }`;
+    return `${this.monthNames[Number(this.currentDate.month) - 1]}, ${this.currentDate.year}`;
   }
 
   public getSelectedDateLabel(): string {
-    return `${this.monthNames[Number(this.currentDate.month) - 1]} ${
-      this.currentDate.day
-    }, ${this.currentDate.year}`;
+    return `${this.monthNames[Number(this.currentDate.month) - 1]} ${this.currentDate.day}, ${
+      this.currentDate.year
+    }`;
   }
 
   private checkForOneAvailableDateOnly(): void {
     // Case of one available date only - update the selected date
     if (this.sortedAvailableDates.length === 1) {
       this.updateSelectedDate(
-        dayjs(this.sortedAvailableDates[0], "YYYY/MMMM/DD").date()?.toString()
+        dayjs(this.sortedAvailableDates[0], 'YYYY/MMMM/DD').date()?.toString(),
       );
     }
   }
 
   private updateLockNext(): void {
     this.lockNext = !Array.from(this.sortedAvailableMonths).find(
-      (month) => month > Number(this.currentDate.month)
+      (month) => month > Number(this.currentDate.month),
     );
   }
 
   private updateLockPrevious(): void {
     this.lockPrevious = !Array.from(this.sortedAvailableMonths).find(
-      (month) => month < Number(this.currentDate.month)
+      (month) => month < Number(this.currentDate.month),
     );
   }
 
   private initializeDates(): string[] {
     const sortedProgramsByDates = this.availablePrograms.sort(
       (program1: Program, program2: Program) => {
-        return (
-          (dayjs(program1.tripFromDate) as any) -
-          (dayjs(program2.tripFromDate) as any)
-        );
-      }
+        return (dayjs(program1.tripFromDate) as any) - (dayjs(program2.tripFromDate) as any);
+      },
     );
     return sortedProgramsByDates.map((program) => {
-      return dayjs(program.tripFromDate).format("YYYY/MMMM/DD");
+      return dayjs(program.tripFromDate).format('YYYY/MMMM/DD');
     });
   }
 
   private initializeMonths(): Set<number> {
     const months = new Set<number>();
     this.sortedAvailableDates.map((date) => {
-      months.add(dayjs(date, "YYYY/MMMM/DD").month() + 1);
+      months.add(dayjs(date, 'YYYY/MMMM/DD').month() + 1);
     });
     return months;
   }
@@ -127,7 +122,7 @@ export class ProgramDateInput {
   private initializeYears(): Set<number> {
     const years = new Set<number>();
     this.sortedAvailableDates.map((date) => {
-      years.add(dayjs(date, "YYYY/MMMM/DD").year());
+      years.add(dayjs(date, 'YYYY/MMMM/DD').year());
     });
     return years;
   }
@@ -136,18 +131,15 @@ export class ProgramDateInput {
     return {
       month: Array.from(this.sortedAvailableMonths)[0].toString(),
       year: Array.from(this.sortedAvailableYears)[0].toString(),
-      day: "",
+      day: '',
     };
   }
 
   private updateAvailableDaysInCurrentMonth(): void {
     const availableDays = [] as number[];
     this.sortedAvailableDates.map((date) => {
-      if (
-        (dayjs(date, "YYYY/MMMM/DD").month() + 1).toString() ===
-        this.currentDate.month
-      ) {
-        availableDays.push(dayjs(date, "YYYY/MMMM/DD").get("date"));
+      if ((dayjs(date, 'YYYY/MMMM/DD').month() + 1).toString() === this.currentDate.month) {
+        availableDays.push(dayjs(date, 'YYYY/MMMM/DD').get('date'));
       }
     });
     this.availableDaysInCurrentMonth = availableDays;

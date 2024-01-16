@@ -1,0 +1,115 @@
+@import 'src/assets/style/abstract/colors';
+@import 'src/assets/style/abstract/breakpoints';
+
+.baseModalWrapper {
+  z-index: 5000;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  overflow-y: auto;
+  left: 480px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: calc(100% - 480px);
+  min-height: 100vh;
+  background-color: #eef2f4;
+
+  .authPanel {
+    position: absolute;
+    top: 300px;
+    left: 50%;
+    width: 389px;
+    font-size: 0;
+    transform: translateX(-50%);
+    background-color: #fff;
+    border-radius: 6px;
+
+    .returningApplicantsForm {
+      padding: 30px 40px;
+      text-align: center;
+      width: 380px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .popupHeader {
+        font-size: 20px;
+        height: 84px;
+        line-height: 1.5;
+        color: #5e656f;
+        text-align: center;
+      }
+
+      .formSelectQuestions {
+        margin-top: 40px;
+
+        .inputsWrapper {
+          .column {
+            .inputWrapper {
+              cursor: pointer;
+            }
+
+            .dropdown {
+              .dropdownList {
+                .option {
+                  height: 43px;
+                }
+              }
+            }
+          }
+        }
+      }
+
+      .termsAndConditions {
+        font-size: 14px;
+        margin-top: 40px;
+        display: flex;
+        justify-content: center;
+        color: $dark;
+
+        a {
+          color: $onward-blue-link;
+          margin-left: 4px;
+        }
+      }
+
+      .popupFooter {
+        margin-top: 40px;
+        font-size: 14px;
+        color: $dark;
+        text-align: center;
+      }
+
+      .continueButton {
+        margin-top: 40px;
+        background-image: linear-gradient(to right, #00cef3, #00a0e2);
+        color: $white;
+        border: none;
+        width: 230px;
+        height: 44px;
+        border-radius: 22px;
+        font-weight: 600;
+
+        &.disabled {
+          background-color: #eef2f4;
+          color: #172336;
+          background-image: unset;
+          cursor: auto;
+        }
+      }
+    }
+  }
+}
+
+@include phone {
+  .baseModalWrapper {
+    width: 100vw;
+    left: 0;
+
+    .authPanel {
+      top: 65px;
+      height: 100vh;
+    }
+  }
+}

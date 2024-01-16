@@ -1,6 +1,6 @@
-import { Program } from "./program.interface.ts";
+import { Program } from '../../../excel-registration-front/src/Modules/Onward/Interfaces/program.interface';
 
-export type PaymentStatus = "Unpaid" | "Paid";
+export type PaymentStatus = 'Unpaid' | 'Paid';
 
 export interface ApplicationData {
   EXCEL: {

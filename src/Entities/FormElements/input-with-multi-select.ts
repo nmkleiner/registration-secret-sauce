@@ -1,11 +1,11 @@
-import { RawQuestion } from "registration-secret-sauce";
-import { CheckboxOption } from "../Options/checkbox-option";
-import { UserInput } from "registration-secret-sauce";
-import { BaseSectionInterface } from "../Section/section.interface";
-import { InputWithOptions } from "./index";
-import { OptionTransformer } from "../../Transformers/option.transformer";
-import { isEmpty } from "lodash-es";
-import { Option } from "../Options/option";
+import { RawQuestion } from '../../Interfaces/Form/question.interfaces';
+import { CheckboxOption } from '../Options/checkbox-option';
+import { UserInput } from '../../Types/Form/user-input.type';
+import { BaseSectionInterface } from '../Section/section.interface';
+import { InputWithOptions } from './index';
+import { OptionTransformer } from '../../Transformers/option.transformer';
+import { isEmpty } from 'lodash-es';
+import { Option } from '../Options/option';
 
 export class InputWithMultiSelect extends InputWithOptions {
   public declare options: CheckboxOption[];
@@ -18,10 +18,7 @@ export class InputWithMultiSelect extends InputWithOptions {
   }
 
   public buildOptions(rawQuestion: RawQuestion): CheckboxOption[] {
-    return OptionTransformer.transformCheckboxOptions(
-      rawQuestion.options,
-      rawQuestion.name
-    );
+    return OptionTransformer.transformCheckboxOptions(rawQuestion.options, rawQuestion.name);
   }
 
   public isSelected(optionValue: string): boolean {
@@ -29,7 +26,7 @@ export class InputWithMultiSelect extends InputWithOptions {
   }
 
   public getValueForAnswer(): UserInput {
-    return Array.from(this.selectedOptionValues).join(";");
+    return Array.from(this.selectedOptionValues).join(';');
   }
 
   public updateSelectedOptions(optionValue: string): void {
@@ -38,17 +35,17 @@ export class InputWithMultiSelect extends InputWithOptions {
     } else {
       this.selectedOptionValues.add(optionValue);
     }
-    this.value = Array.from(this.selectedOptionValues).join(";");
+    this.value = Array.from(this.selectedOptionValues).join(';');
   }
 
   public clearSelectedOptions(): void {
     this.selectedOptionValues.clear();
-    this.value = "";
+    this.value = '';
   }
 
   protected initializeSelectedOptions() {
     if (!isEmpty(this.value)) {
-      this.value.split(";").forEach((optionValue) => {
+      this.value.split(';').forEach((optionValue) => {
         this.selectedOptionValues.add(optionValue);
       });
     }
@@ -65,10 +62,8 @@ export class InputWithMultiSelect extends InputWithOptions {
   }
 
   handleNoneOption(option: Option, show: boolean): void {
-    if (option.value.toLowerCase() === "none") {
-      const otherOptions = this.options.filter(
-        (option) => option.value.toLowerCase() !== "none"
-      );
+    if (option.value.toLowerCase() === 'none') {
+      const otherOptions = this.options.filter((option) => option.value.toLowerCase() !== 'none');
 
       otherOptions.forEach((option) => (show ? option.show() : option.hide()));
       if (!show) {

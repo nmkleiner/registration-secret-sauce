@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import path from "path";
+import checker from "vite-plugin-checker";
 import dtsPlugin from "vite-plugin-dts";
 
 // https://vitejs.dev/config/
@@ -9,6 +10,10 @@ export default defineConfig({
     vue(),
     dtsPlugin({
       insertTypesEntry: true,
+    }),
+    checker({
+      // vueTsc: true,
+      typescript: true,
     }),
   ],
 

@@ -1,47 +1,41 @@
-import { BaseApi } from "../BaseApi/base.api";
 import {
   AgeRange,
   AuthenticateResponse,
   CheckDetailsRequestData,
   CheckDetailsResponse,
-  ControlQuestionReturningApplicant,
   ControlQuestionsResponse,
   CreateAccountRequestData,
   CreateAccountResponse,
   EmailExistResponse,
   LoginResponse,
   SendTempCodeResponse,
-} from "./auth-api.interfaces";
-import { AuthApiRoutes } from "./auth-api-routes.enum";
-import { AppHttpClient } from "../HttpClient/http-client";
+} from './auth-api.interfaces';
+import router from '../../Router';
+import { BaseApi } from '../../../../excel-registration-front/src/Core/Infrastructure/API/base.api';
+import { AuthApiRoutes } from './auth-api-routes.enum';
+import { ExcelPathNames } from '../../../../excel-registration-front/src/Modules/Excel/Router/path-names.enum';
+import { AppHttpClient } from '../../../../excel-registration-front/src/Core/Infrastructure/HttpClient/http-client';
+import { useUserStore } from '../../Stores/User/user.store';
+import { ControlQuestionReturningApplicant } from '../../../../excel-registration-front/src/Modules/Onward/Interfaces/control-question-returning-applicant';
 
 class AuthApi extends BaseApi {
-  public async authenticate(): Promise<AuthenticateResponse["user"]> {
+  public async authenticate(): Promise<AuthenticateResponse['user']> {
     try {
-      const response = await this.httpClient.get<AuthenticateResponse>(
-        AuthApiRoutes.auth
-      );
+      const response = await this.httpClient.get<AuthenticateResponse>(AuthApiRoutes.auth);
       return response.data.user;
     } catch (e) {
-      alert("implement redirect to login page here");
-      // await router.push({ name: OnwardPathNames.Login });
+      await router.push({ name: ExcelPathNames.Login });
     }
   }
 
-  public async emailExist(
-    email: string,
-    countryIsoCode: string
-  ): Promise<EmailExistResponse> {
+  public async emailExist(email: string, countryIsoCode: string): Promise<EmailExistResponse> {
     try {
-      const response = await this.httpClient.post<EmailExistResponse>(
-        AuthApiRoutes.emailExist,
-        {
-          email,
-          country: countryIsoCode,
-          taglit_program: this.program,
-          origin: this.origin,
-        }
-      );
+      const response = await this.httpClient.post<EmailExistResponse>(AuthApiRoutes.emailExist, {
+        email,
+        country: countryIsoCode,
+        taglit_program: this.program,
+        origin: this.origin,
+      });
       return response?.data;
     } catch (e) {
       console.error(e);
@@ -49,10 +43,7 @@ class AuthApi extends BaseApi {
     }
   }
 
-  public async sendTempCode(
-    email: string,
-    countryIsoCode: string
-  ): Promise<SendTempCodeResponse> {
+  public async sendTempCode(email: string, countryIsoCode: string): Promise<SendTempCodeResponse> {
     try {
       const response = await this.httpClient.post(AuthApiRoutes.sendTempCode, {
         email,
@@ -70,7 +61,7 @@ class AuthApi extends BaseApi {
   public async loginRequest(
     email: string,
     password: string,
-    countryIsCode: string
+    countryIsCode: string,
   ): Promise<LoginResponse> {
     try {
       const response = await this.httpClient.post(AuthApiRoutes.loginRequest, {
@@ -88,7 +79,7 @@ class AuthApi extends BaseApi {
   }
 
   public async checkDetails(
-    checkDetailsRequestData: CheckDetailsRequestData
+    checkDetailsRequestData: CheckDetailsRequestData,
   ): Promise<CheckDetailsResponse> {
     try {
       const response = await this.httpClient.post(AuthApiRoutes.checkDetails, {
@@ -104,7 +95,7 @@ class AuthApi extends BaseApi {
   }
 
   public async createAccount(
-    createAccountRequestData: CreateAccountRequestData
+    createAccountRequestData: CreateAccountRequestData,
   ): Promise<CreateAccountResponse> {
     try {
       const response = await this.httpClient.post(AuthApiRoutes.createAccount, {
@@ -119,19 +110,16 @@ class AuthApi extends BaseApi {
   }
 
   public async controlQuestionRequest(
-    payload: ControlQuestionReturningApplicant
+    payload: ControlQuestionReturningApplicant,
   ): Promise<ControlQuestionsResponse> {
     const data = {
-      application_id: payload.applicationId,
+      application_id: useUserStore().returningApplicantForm.applicationId,
       field_set: payload.fieldSet,
       answer: payload.answer,
     };
 
     try {
-      const response = await this.httpClient.post(
-        AuthApiRoutes.controlQuestion,
-        data
-      );
+      const response = await this.httpClient.post(AuthApiRoutes.controlQuestion, data);
       return response?.data;
     } catch (e) {
       console.error(e);
@@ -154,9 +142,7 @@ class AuthApi extends BaseApi {
 
   public async getCreateAccountData(): Promise<AgeRange> {
     try {
-      const response = await this.httpClient.get(
-        AuthApiRoutes.createAccountData
-      );
+      const response = await this.httpClient.get(AuthApiRoutes.createAccountData);
       return response?.data;
     } catch (e) {
       console.error(e);

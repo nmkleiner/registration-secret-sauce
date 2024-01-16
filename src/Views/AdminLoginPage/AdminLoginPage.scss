@@ -1,0 +1,69 @@
+.adminPage {
+  width: 100%;
+  height: 100vh;
+  background-size: cover;
+  overflow-y: hidden;
+  background-color: #eef2f4;
+
+  .authPanel {
+    border-radius: 6px;
+    width: 380px;
+    height: fit-content;
+    padding-bottom: 20px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    box-shadow: 0 2px 15px 0 rgb(0 0 0 / 10%);
+    background-color: #fff;
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .title {
+        margin: 20px;
+        text-align: center;
+
+        -webkit-text-fill-color: transparent;
+        -webkit-background-clip: text;
+        background-image: linear-gradient(to right, #00a0e2, #00cef3);
+
+        .line {
+          height: 2px;
+          width: 300px;
+          left: -134px;
+          margin-top: 16px;
+          -webkit-text-fill-color: transparent;
+          background-image: linear-gradient(to right, #00a0e2, #00cef3);
+        }
+      }
+
+      .textField {
+        width: 80%;
+        margin-bottom: 24px;
+
+        input {
+          border-radius: 6px;
+          background-color: #eef2f4;
+          width: 300px;
+          height: 48px;
+        }
+      }
+
+      .error {
+        text-align: start;
+        font-size: 12px;
+        font-family: NexaRegular, sans-serif;
+        color: #dc6565;
+        background-color: #fcf0f0;
+        padding: 8px;
+        border-radius: 8px;
+        width: 80%;
+      }
+    }
+  }
+}

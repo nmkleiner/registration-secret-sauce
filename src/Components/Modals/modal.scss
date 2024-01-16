@@ -1,0 +1,73 @@
+@import 'src/assets/style/abstract/colors';
+@import 'src/assets/style/abstract/breakpoints';
+
+.appModalsWrapper {
+  &.partialScreen {
+    @include tablet {
+      height: auto;
+      top: unset;
+      bottom: 0;
+    }
+  }
+
+  &.panelPosition {
+    @include desktop-only {
+    inset-inline-start: 480px;
+    }
+  }
+
+  &.toast {
+    z-index: 3;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    inset-inline-start: unset;
+    inset-inline-end: unset;
+    background-color: $dark;
+    color: $white;
+    .modalContent {
+    background-color: $dark;
+    }
+
+  @include phone {
+    height: unset;
+    max-height: unset;
+  }
+
+  }
+
+  @include phone {
+    height: 100vh;
+    max-height: 100vh;
+    width: 100vw;
+    max-width: 100vw;
+    border-radius: 0;
+    margin: 0;
+  }
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  .modalContent {
+    display: inline;
+    overflow: scroll;
+    background-color: white;
+    max-height: 90%;
+    border-radius: 6px;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    @include phone {
+      max-height: 100%;
+      width: 100%;
+      border-radius: 0;
+    }
+  }
+
+  ::backdrop {
+    background: $dark-opacity;
+    backdrop-filter: blur(1px);
+  }
+}

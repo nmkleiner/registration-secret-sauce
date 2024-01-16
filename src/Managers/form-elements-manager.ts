@@ -1,9 +1,9 @@
-import { BasicInput, InputWithOptions } from "../Entities/FormElements";
-import { QuestionTypes } from "registration-secret-sauce";
-import { InputWithMultiSelect } from "../Entities/FormElements";
-import { QuestionUniqueNames } from "registration-secret-sauce";
-import { OnwardQuestionUniqueNames } from "@/Modules/Onward/Enums/onward-question-names.enum";
-import { PhoneInput } from "../Entities/FormElements/phone-input";
+import { BasicInput, InputWithOptions } from '../Entities/FormElements';
+import { QuestionTypes } from '../Enums/input-types.enum';
+import { InputWithMultiSelect } from '../Entities/FormElements';
+import { QuestionUniqueNames } from '../../../excel-registration-front/src/Modules/Excel/Enums/excel-question-names.enum';
+import { OnwardQuestionUniqueNames } from '../../../excel-registration-front/src/Modules/Onward/Enums/onward-question-names.enum';
+import { PhoneInput } from '../Entities/FormElements/phone-input';
 
 export interface OptionCondition {
   optionId: string;
@@ -12,8 +12,7 @@ export interface OptionCondition {
 
 export default class FormElementsManager {
   //  first string is the field id, second string is the option id, third string is the triggered field ids
-  private optionConditionsRegistry: Record<string, Record<string, string[]>> =
-    {};
+  private optionConditionsRegistry: Record<string, Record<string, string[]>> = {};
   private formElementsRegistry: Record<string, BasicInput> = {};
 
   public addOptionCondition(fieldId: string, optionCondition: OptionCondition) {
@@ -24,7 +23,7 @@ export default class FormElementsManager {
       this.optionConditionsRegistry[fieldId][optionCondition.optionId] = [];
     }
     this.optionConditionsRegistry[fieldId][optionCondition.optionId].push(
-      optionCondition.triggeredFieldId
+      optionCondition.triggeredFieldId,
     );
   }
 
@@ -38,18 +37,14 @@ export default class FormElementsManager {
   public initializeOptionConditions(): void {
     //   hide all the triggered fields
     Object.keys(this.optionConditionsRegistry).forEach((fieldId) => {
-      Object.keys(this.optionConditionsRegistry[fieldId]).forEach(
-        (optionId) => {
-          this.optionConditionsRegistry[fieldId][optionId].forEach(
-            (triggeredFieldId) => {
-              const triggeredField = this.getFormElementById(triggeredFieldId);
-              if (triggeredField) {
-                triggeredField.hide();
-              }
-            }
-          );
-        }
-      );
+      Object.keys(this.optionConditionsRegistry[fieldId]).forEach((optionId) => {
+        this.optionConditionsRegistry[fieldId][optionId].forEach((triggeredFieldId) => {
+          const triggeredField = this.getFormElementById(triggeredFieldId);
+          if (triggeredField) {
+            triggeredField.hide();
+          }
+        });
+      });
     });
 
     this.getFormElementsList().forEach((formElement) => {
@@ -69,21 +64,17 @@ export default class FormElementsManager {
 
   public getFormElementByType(type: QuestionTypes.waiver): InputWithMultiSelect;
   public getFormElementByType(type: QuestionTypes): BasicInput {
-    return this.getFormElementsList().find(
-      (formElement) => formElement.questionType === type
-    );
+    return this.getFormElementsList().find((formElement) => formElement.questionType === type);
   }
 
   public getFormElementByUniqueName(
-    uniqueName: QuestionUniqueNames | OnwardQuestionUniqueNames
+    uniqueName: QuestionUniqueNames | OnwardQuestionUniqueNames,
   ): BasicInput {
-    return this.getFormElementsList().find(
-      (formElement) => formElement.uniqueName === uniqueName
-    );
+    return this.getFormElementsList().find((formElement) => formElement.uniqueName === uniqueName);
   }
 
   public getPhoneInputByUniqueName(
-    uniqueName: QuestionUniqueNames | OnwardQuestionUniqueNames
+    uniqueName: QuestionUniqueNames | OnwardQuestionUniqueNames,
   ): PhoneInput {
     const input = this.getFormElementByUniqueName(uniqueName);
     if (input instanceof PhoneInput) {

@@ -1,64 +1,64 @@
-import { IsOpen } from "../BaseClasses/is-open";
-import { translate } from "../../../../excel-registration-front/src/Core/Translations/vue-i18n";
-import { RawQuestion } from "registration-secret-sauce";
-import { RawFormSection } from "registration-secret-sauce";
-import { SectionInterface } from "./section.interface";
+import { IsOpen } from '../BaseClasses/is-open';
+import { translate } from '../../../../excel-registration-front/src/Core/Translations/vue-i18n';
+import { RawQuestion } from '../../Interfaces/Form/question.interfaces';
+import { RawFormSection } from '../../Interfaces/Form/section.interfaces';
+import { SectionInterface } from './section.interface';
 import {
   FileUserAnswer,
   UploadedFile,
   UserAnswer,
-} from "registration-secret-sauce";
+} from '../../Types/Form/user-answer.type';
 import {
   UploadPhase2FilesResponseDto,
   UploadSecureFilesResponse,
   UploadSecureFilesResponseDto,
-} from "registration-secret-sauce";
-import { isEmpty, keyBy } from "lodash-es";
-import { UserRegistrationApi } from "registration-secret-sauce";
-import { useUserStore } from "../../../../../../registration-secret-sauce/src/Stores/Stores/User/user.store";
-import { useModalsStore } from "registration-secret-sauce";
-import { FileInput } from "../FormElements/file-input";
+} from '../../API/UploadFilesApi/Interfaces/upload-secure-files.response';
+import { isEmpty, keyBy } from 'lodash-es';
+import { UserRegistrationApi } from '../../API';
+import { useUserStore } from '../../Stores/User/user.store';
+import { useModalsStore } from '../../Stores/Modals/modals.store';
+import { FileInput } from '../FormElements/file-input';
 import {
   EXCEL_SAVE_BUTTON_OFF_LIST,
   ONWARD_SAVE_BUTTON_OFF_LIST,
-} from "registration-secret-sauce";
-import { useCountryStore } from "../../../../../../registration-secret-sauce/src/Stores/Stores/Country/country.store";
-import { BasicInput } from "../FormElements";
-import UploadFilesApi from "registration-secret-sauce";
-import { ModalNames } from "registration-secret-sauce";
-import { isFileInput } from "../FormElements/Helpers/is-file-input";
-import { useApplicationStore } from "../../../../../../registration-secret-sauce/src/Stores/Stores/Application/application.store";
-import { sortObjectsByProperty } from "../../../../excel-registration-front/src/Core/Helpers/sort-objects-by-property";
-import { useFormNavigationStore } from "../../../../../../registration-secret-sauce/src/Stores/Stores/FormNavigation/form-navigation.store";
-import { formElementsFactory } from "../../Factories/form-elements.factory";
+} from '../../Enums/input-types.enum';
+import { useCountryStore } from '../../Stores/Country/country.store';
+import { BasicInput } from '../FormElements';
+import UploadFilesApi from '../../API/UploadFilesApi/upload-files-api';
+import { ModalNames } from '../../Stores/Modals/modals-state.interface';
+import { isFileInput } from '../FormElements/Helpers/is-file-input';
+import { useApplicationStore } from '../../Stores/Application/application.store';
+import { sortObjectsByProperty } from '../../../../excel-registration-front/src/Core/Helpers/sort-objects-by-property';
+import { useFormNavigationStore } from '../../Stores/FormNavigation/form-navigation.store';
+import { formElementsFactory } from '../../Factories/form-elements.factory';
 import {
   addContactEmailValidationRules,
   addContactPhoneValidationRules,
   addParentsEmailValidationRules,
   addParentsPhonesValidationRules,
-} from "../../../../excel-registration-front/src/Core/Validation/assign-validation-rules";
-// import ExcelGoogleTagManager from '@/Modules/Excel/Managers/ExcelGoogleTagManager/excel-google-tag.manager';
+} from '../../../../excel-registration-front/src/Core/Validation/assign-validation-rules';
+import ExcelGoogleTagManager from '../../../../excel-registration-front/src/Modules/Excel/Managers/ExcelGoogleTagManager/excel-google-tag.manager';
 import {
   DocumentResponse,
   OnwardSaveSectionResponse,
   SaveSectionResponse,
-} from "registration-secret-sauce";
+} from '../../API/UserRegistrationApi/Interfaces/save-section.response';
 import {
-  SectionNames,
+  ExcelSectionNames,
   sectionsWithLoaderOnSave,
-} from "registration-secret-sauce";
-// import { useInternshipPreferencesStore } from '@/Modules/Excel/Stores/InternshipPreferences/internship-preferences.store';
-import { useProduct } from "../../../../excel-registration-front/src/Core/Composables/program/useProduct";
-import { TaglitProduct } from "registration-secret-sauce";
-import { OnwardErrorMessageEnum } from "../../../../excel-registration-front/src/Modules/Onward/Enums/onward-error-message.enum";
-import { OnwardSectionNames } from "../../../../excel-registration-front/src/Modules/Onward/Enums/onward-section-names.enum";
-import { RegistrationTab } from "../Tab/registration-tab";
-import { RepetitiveQuestion } from "../FormElements/repetitive-question";
-import { HiddenInput } from "../FormElements/hidden-input";
+} from '../../../../excel-registration-front/src/Modules/Excel/Enums/excel-section-names.enum';
+import { useInternshipPreferencesStore } from '../../../../excel-registration-front/src/Modules/Excel/Stores/InternshipPreferences/internship-preferences.store';
+import { useProduct } from '../../../../excel-registration-front/src/Core/Composables/program/useProduct';
+import { TaglitProduct } from '../../../../excel-registration-front/src/Core/Infrastructure/API/taglit-product.enum';
+import { OnwardErrorMessageEnum } from '../../../../excel-registration-front/src/Modules/Onward/Enums/onward-error-message.enum';
+import { OnwardSectionNames } from '../../../../excel-registration-front/src/Modules/Onward/Enums/onward-section-names.enum';
+import { RegistrationTab } from '../Tab/registration-tab';
+import { RepetitiveQuestion } from '../FormElements/repetitive-question';
+import { HiddenInput } from '../FormElements/hidden-input';
 import {
-  // isExcelPushResponse,
+  isExcelPushResponse,
   isOnwardPushResponse,
-} from "registration-secret-sauce";
+} from '../../API/FormBuilderApi/Helpers/response-type';
 
 export class FormSection extends IsOpen implements SectionInterface {
   public id: string;
@@ -102,15 +102,10 @@ export class FormSection extends IsOpen implements SectionInterface {
     this.setIsVisibility();
   }
 
-  public async save(
-    isValid?: boolean,
-    isSaveProcess: boolean = false
-  ): Promise<void> {
+  public async save(isValid?: boolean, isSaveProcess: boolean = false): Promise<void> {
     const { isPhase2Application, activationStatus } = useApplicationStore();
     const allowEditAfterSubmit =
-      this.isEditAfterSubmit &&
-      !isPhase2Application &&
-      activationStatus !== "Inactive";
+      this.isEditAfterSubmit && !isPhase2Application && activationStatus !== 'Inactive';
     //  prevent saving if not all required inputs are valid and section is not marked as editable after submit
     if (isValid === false && !allowEditAfterSubmit) {
       return;
@@ -125,28 +120,23 @@ export class FormSection extends IsOpen implements SectionInterface {
       this.tab.evaluateCompleted();
     }
 
-    if (
-      this.isSaveAndLock ||
-      (this.isOnwardConsularChecks && this.isCompleted)
-    ) {
+    if (this.isSaveAndLock || (this.isOnwardConsularChecks && this.isCompleted)) {
       this.lock();
     }
 
     const formSectionId = this.id;
     const countryIsoCode = useCountryStore().productCountryIsoCode;
-    const { contactId, activeApplicationId: applicationId } =
-      useUserStore().ids;
+    const { contactId, activeApplicationId: applicationId } = useUserStore().ids;
     const { throwError, isPhase2Submission } = useApplicationStore();
     const uploadedFiles = await this.getUploadedFiles();
     await this.getUploadedFilesOnwardPhase2(); // should be above getAnswersFromInputs()
     const userAnswers = this.getAnswersFromInputs();
     const isPhase2SaveProcess = isSaveProcess && this.registrationPhase === 2;
-    const partialSubmit =
-      (allowEditAfterSubmit && isValid === false) || isPhase2SaveProcess;
+    const partialSubmit = (allowEditAfterSubmit && isValid === false) || isPhase2SaveProcess;
 
     this.resetAllErrorsProgram();
 
-    // this.fireGoogleTagManagerEvent();
+    this.fireGoogleTagManagerEvent();
     const response = await UserRegistrationApi.submitSection({
       throwError,
       contactId,
@@ -172,9 +162,7 @@ export class FormSection extends IsOpen implements SectionInterface {
     const { isPhase2Application, activationStatus } = useApplicationStore();
     //  if section is marked as editable after submit, and applicant is not moved to phase 2, and application is not inactive - do not lock section
     const allowEditAfterSubmit =
-      this.isEditAfterSubmit &&
-      !isPhase2Application &&
-      activationStatus !== "Inactive";
+      this.isEditAfterSubmit && !isPhase2Application && activationStatus !== 'Inactive';
     if (allowEditAfterSubmit) {
       return;
     }
@@ -202,8 +190,8 @@ export class FormSection extends IsOpen implements SectionInterface {
 
   public calculateSaveButtonText() {
     return this.isSaveAndLock
-      ? translate("general.buttons.saveAndLock")
-      : translate("general.buttons.save");
+      ? translate('general.buttons.saveAndLock')
+      : translate('general.buttons.save');
   }
 
   public fas(isCompleted: boolean) {
@@ -231,9 +219,7 @@ export class FormSection extends IsOpen implements SectionInterface {
 
       const largeFileSize = 10 * 1024 ** 2;
       userAnswersFiles.forEach((file: FileUserAnswer) => {
-        file.value.size >= largeFileSize
-          ? largeFiles.push(file)
-          : files.push(file);
+        file.value.size >= largeFileSize ? largeFiles.push(file) : files.push(file);
       });
 
       const uploadedFiles = await this.uploadFiles(files);
@@ -241,19 +227,15 @@ export class FormSection extends IsOpen implements SectionInterface {
 
       useModalsStore().closeModal(ModalNames.uploadWaitFileModal);
 
-      return [...uploadedFiles, ...uploadedLargeFiles].map(
-        (uploadedFile): UploadedFile => {
-          const input = inputFiles.find(
-            (input) => input.fileTopic === uploadedFile.fileTopic
-          );
-          return {
-            ...uploadedFile,
-            id: input.fileId,
-            formId: input.fieldName,
-            isIsraeliPassport: input.isIsraeliPassport,
-          };
-        }
-      );
+      return [...uploadedFiles, ...uploadedLargeFiles].map((uploadedFile): UploadedFile => {
+        const input = inputFiles.find((input) => input.fileTopic === uploadedFile.fileTopic);
+        return {
+          ...uploadedFile,
+          id: input.fileId,
+          formId: input.fieldName,
+          isIsraeliPassport: input.isIsraeliPassport,
+        };
+      });
     }
   }
 
@@ -269,9 +251,7 @@ export class FormSection extends IsOpen implements SectionInterface {
     const userAnswersFiles = this.getFilesUserAnswers(inputFiles);
 
     if (!isEmpty(userAnswersFiles)) {
-      const uploadFilesResponseDtos = await this.uploadPhase2Attachments(
-        userAnswersFiles
-      );
+      const uploadFilesResponseDtos = await this.uploadPhase2Attachments(userAnswersFiles);
 
       const inputsKeyedByIds = keyBy(inputFiles, (input) => input.id);
       uploadFilesResponseDtos.forEach((uploadFilesResponseDto) => {
@@ -293,7 +273,7 @@ export class FormSection extends IsOpen implements SectionInterface {
     await nextTick();
     const sectionElement = document.getElementById(this.id);
     if (sectionElement) {
-      sectionElement.scrollIntoView({ behavior: "smooth" });
+      sectionElement.scrollIntoView({ behavior: 'smooth' });
     }
   }
 
@@ -304,7 +284,7 @@ export class FormSection extends IsOpen implements SectionInterface {
   protected getAnswersFromInputs(): UserAnswer[] {
     const visibleInputs = this.inputs.filter((input) => input.isVisible);
     const hiddenInputs = this.inputs.filter(
-      (input): input is HiddenInput => input instanceof HiddenInput
+      (input): input is HiddenInput => input instanceof HiddenInput,
     );
     const userAnswers = [...visibleInputs, ...hiddenInputs].map((input) => {
       if (input instanceof FileInput && this.isOnwardConsularChecks) {
@@ -316,9 +296,7 @@ export class FormSection extends IsOpen implements SectionInterface {
     const repetitiveQuestions = this.repetitiveQuestions;
 
     if (!isEmpty(repetitiveQuestions)) {
-      userAnswers.push(
-        ...repetitiveQuestions.map((question) => question.getDuplicatedAnswer())
-      );
+      userAnswers.push(...repetitiveQuestions.map((question) => question.getDuplicatedAnswer()));
     }
 
     return userAnswers.filter((answer) => Boolean(answer));
@@ -332,9 +310,7 @@ export class FormSection extends IsOpen implements SectionInterface {
     return fileInputs;
   }
 
-  protected getFilesUserAnswers(
-    fileInputs: FileInput[]
-  ): FileUserAnswer[] | null {
+  protected getFilesUserAnswers(fileInputs: FileInput[]): FileUserAnswer[] | null {
     const filesAnswers: FileUserAnswer[] = [];
     fileInputs?.map((input) => {
       const inputAnswer = input.getAnswer();
@@ -352,21 +328,18 @@ export class FormSection extends IsOpen implements SectionInterface {
     switch (useProduct().product.value) {
       case TaglitProduct.EXCEL:
         this.isSaveButtonActive = !EXCEL_SAVE_BUTTON_OFF_LIST.includes(
-          rawFormSection.mappings?.uniqueName
+          rawFormSection.mappings?.uniqueName,
         );
         break;
       case TaglitProduct.ONWARD:
         this.isSaveButtonActive = !ONWARD_SAVE_BUTTON_OFF_LIST.includes(
-          rawFormSection.mappings?.uniqueName
+          rawFormSection.mappings?.uniqueName,
         );
     }
   }
 
   get isOnwardConsularChecks(): boolean {
-    return (
-      useProduct().isOnward.value &&
-      this.uniqueName === OnwardSectionNames.consularChecks
-    );
+    return useProduct().isOnward.value && this.uniqueName === OnwardSectionNames.consularChecks;
   }
 
   private checkIfSectionIsLocked() {
@@ -380,7 +353,7 @@ export class FormSection extends IsOpen implements SectionInterface {
   }
 
   private async uploadFiles(
-    fileUserAnswers: FileUserAnswer[]
+    fileUserAnswers: FileUserAnswer[],
   ): Promise<UploadSecureFilesResponseDto[]> {
     const formData = new FormData();
 
@@ -389,17 +362,18 @@ export class FormSection extends IsOpen implements SectionInterface {
     });
 
     try {
-      const uploadSecureFilesResponse: UploadSecureFilesResponse =
-        await UploadFilesApi.uploadFiles(formData);
+      const uploadSecureFilesResponse: UploadSecureFilesResponse = await UploadFilesApi.uploadFiles(
+        formData,
+      );
 
       return uploadSecureFilesResponse.data;
     } catch (error) {
-      alert("Error uploading files");
+      alert('Error uploading files');
     }
   }
 
   private async uploadPhase2Attachments(
-    fileUserAnswers: FileUserAnswer[]
+    fileUserAnswers: FileUserAnswer[],
   ): Promise<UploadPhase2FilesResponseDto[]> {
     const { contactId, activeApplicationId } = useUserStore().ids;
 
@@ -410,34 +384,26 @@ export class FormSection extends IsOpen implements SectionInterface {
     });
 
     try {
-      return UploadFilesApi.uploadPhase2Attachments(
-        formData,
-        contactId,
-        activeApplicationId
-      );
+      return UploadFilesApi.uploadPhase2Attachments(formData, contactId, activeApplicationId);
     } catch (error) {
-      alert("Error uploading files");
+      alert('Error uploading files');
     }
   }
 
   private async uploadLargeFiles(
-    fileUserAnswers: FileUserAnswer[]
+    fileUserAnswers: FileUserAnswer[],
   ): Promise<Awaited<UploadSecureFilesResponseDto>[]> {
     return Promise.all(
       fileUserAnswers.map(
-        async (
-          fileUserAnswer: FileUserAnswer
-        ): Promise<UploadSecureFilesResponseDto> => {
-          const response = await UploadFilesApi.uploadFileChunks(
-            fileUserAnswer.value
-          );
+        async (fileUserAnswer: FileUserAnswer): Promise<UploadSecureFilesResponseDto> => {
+          const response = await UploadFilesApi.uploadFileChunks(fileUserAnswer.value);
 
           return {
             ...response,
             fileTopic: fileUserAnswer.type,
           };
-        }
-      )
+        },
+      ),
     );
   }
 
@@ -451,24 +417,25 @@ export class FormSection extends IsOpen implements SectionInterface {
         useApplicationStore().formElementsManager.addFormElement(formElement);
         return formElement;
       }),
-      "sort"
+      'sort',
     );
   }
 
   private initializeRepetitiveQuestions(): void {
     const removeDependentsFromFormSectionInputs = () => {
-      const repetitiveQuestionsDependents: BasicInput[] =
-        repetitiveQuestions.reduce((acc, repetitiveQuestion) => {
+      const repetitiveQuestionsDependents: BasicInput[] = repetitiveQuestions.reduce(
+        (acc, repetitiveQuestion) => {
           return [
             ...acc,
             ...repetitiveQuestion.initialDependents,
             repetitiveQuestion.repetitiveButton,
           ];
-        }, []);
+        },
+        [],
+      );
 
       this.inputs = this.inputs.filter(
-        (input) =>
-          !keyBy(repetitiveQuestionsDependents, (item) => item.id)[input.id]
+        (input) => !keyBy(repetitiveQuestionsDependents, (item) => item.id)[input.id],
       );
     };
 
@@ -508,25 +475,25 @@ export class FormSection extends IsOpen implements SectionInterface {
     }
   }
 
-  // protected fireGoogleTagManagerEvent() {
-  //   ExcelGoogleTagManager.fireSubmitSectionEvent(this.order);
-  // }
+  protected fireGoogleTagManagerEvent() {
+    ExcelGoogleTagManager.fireSubmitSectionEvent(this.order);
+  }
 
   private async handleSaveSuccess(
     response: SaveSectionResponse,
-    partialSubmit: boolean
+    partialSubmit: boolean,
   ): Promise<void> {
     this.updateDocumentIds(response.documents);
     useUserStore().setContactId(response.contactId);
 
-    // if (isExcelPushResponse(response)) {
-    //   useApplicationStore().updateApplicationAfterSave({
-    //     phase1AllowSubmission: response.application.Phase_1_Allow_Submission__c,
-    //     phase2AllowSubmission: response.application.Phase_2_Allow_Submission__c,
-    //   });
-    //
-    //   useInternshipPreferencesStore().updateSalesforceJobOfferings();
-    // }
+    if (isExcelPushResponse(response)) {
+      useApplicationStore().updateApplicationAfterSave({
+        phase1AllowSubmission: response.application.Phase_1_Allow_Submission__c,
+        phase2AllowSubmission: response.application.Phase_2_Allow_Submission__c,
+      });
+
+      useInternshipPreferencesStore().updateSalesforceJobOfferings();
+    }
 
     if (isOnwardPushResponse(response)) {
       this.updateFormIds(response);
@@ -541,20 +508,14 @@ export class FormSection extends IsOpen implements SectionInterface {
 
       await useApplicationStore().updateDataForAlgorithmPrograms({
         gender: response.application.Gender__c,
-        campusId:
-          response.application[
-            "ED_College_University_Name__r.Taglitom_Campus_ID__c"
-          ],
-        peerQuestionValue:
-          response.application.First_Priority_With_Whom_Want_to_Go__c,
+        campusId: response.application['ED_College_University_Name__r.Taglitom_Campus_ID__c'],
+        peerQuestionValue: response.application.First_Priority_With_Whom_Want_to_Go__c,
         studentValue: response.application.ED_Are_you_currently_a_student__c,
-        isAllowAlumniRegistration:
-          response.application.Allow_Alumni_Registration__c,
+        isAllowAlumniRegistration: response.application.Allow_Alumni_Registration__c
       });
 
       useApplicationStore().setIneligibleError(
-        response.application.Final_Eligibility__c ===
-          OnwardErrorMessageEnum.Ineligible
+        response.application.Final_Eligibility__c === OnwardErrorMessageEnum.Ineligible,
       );
 
       this.handleParentAnswer();
@@ -572,26 +533,26 @@ export class FormSection extends IsOpen implements SectionInterface {
 
   private getUniqueName(rawFormSection: RawFormSection): string {
     if (!rawFormSection.mappings) {
-      return "no mapping";
+      return 'no mapping';
     }
-    return rawFormSection.mappings.uniqueName || "no mapping";
+    return rawFormSection.mappings.uniqueName || 'no mapping';
   }
 
   private getFieldName(rawFormSection: RawFormSection): string {
     if (!rawFormSection.mappings) {
-      return "no mapping";
+      return 'no mapping';
     }
-    return rawFormSection.mappings.fieldName || "no mapping";
+    return rawFormSection.mappings.fieldName || 'no mapping';
   }
 
   private activateLoader() {
-    if (sectionsWithLoaderOnSave.includes(this.uniqueName as SectionNames)) {
+    if (sectionsWithLoaderOnSave.includes(this.uniqueName as ExcelSectionNames)) {
       useModalsStore().openModal(ModalNames.pleaseWait);
     }
   }
 
   private deactivateLoader() {
-    if (sectionsWithLoaderOnSave.includes(this.uniqueName as SectionNames)) {
+    if (sectionsWithLoaderOnSave.includes(this.uniqueName as ExcelSectionNames)) {
       useModalsStore().closeModal(ModalNames.pleaseWait);
     }
   }
@@ -607,10 +568,7 @@ export class FormSection extends IsOpen implements SectionInterface {
     const fileInputs = this.getFileInputs();
     documents.forEach((document) => {
       fileInputs.forEach((item) => {
-        if (
-          document.formId === item.fileTopic ||
-          document.formId === item.fieldName
-        ) {
+        if (document.formId === item.fileTopic || document.formId === item.fieldName) {
           item.fileId = document.id;
         }
       });
@@ -624,9 +582,7 @@ export class FormSection extends IsOpen implements SectionInterface {
   private updateFormIds(response: OnwardSaveSectionResponse) {
     const updateParentFormIds = () => {
       response.parents.forEach((parent) => {
-        const parentIdInput = this.inputs.find(
-          (input) => input.uniqueName === parent.Form_Id__c
-        );
+        const parentIdInput = this.inputs.find((input) => input.uniqueName === parent.Form_Id__c);
         if (parentIdInput) {
           parentIdInput.value = parent.Id;
         }
@@ -664,8 +620,7 @@ export class FormSection extends IsOpen implements SectionInterface {
 
   private get repetitiveQuestions(): RepetitiveQuestion[] {
     return this.inputs.filter(
-      (input): input is RepetitiveQuestion =>
-        input instanceof RepetitiveQuestion
+      (input): input is RepetitiveQuestion => input instanceof RepetitiveQuestion,
     );
   }
 

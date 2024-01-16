@@ -1,22 +1,20 @@
-import { ExcelFormDataResponse } from "./excel-get-form-data-response.interface.ts";
-import { OnwardFormDataResponse } from "./onward-get-form-data-response.interface.ts";
-import {
-  ApplicationData,
-  ContactData,
-  DropdownsFromDB,
-  RawForm,
-  RawSeason,
-  RegistrationStage,
-  SeasonSetting,
-} from "../../../Interfaces";
+import { RawForm } from '../../../Interfaces/Form/form.interface';
+import { RegistrationStage } from '../../../Interfaces/Form/registration.stage.interface';
+import { SeasonSetting } from '../../../Interfaces/season-setting.interface';
+import { RawSeason } from '../../../Interfaces/raw-season.interface';
+import { ContactData } from '../../../Interfaces/contact-data.interfaces';
+import { ApplicationData } from '../../../Interfaces/application-data.interfaces';
+import { DropdownsFromDB } from '../../../Interfaces/dropdowns-from-db.interface';
+import { OnwardFormDataResponse } from './onward-get-form-data-response.interface';
+import { ExcelFormDataResponse } from './excel-get-form-data-response.interface';
 
 export interface BaseFormDataResponse {
-  type: "EXCEL" | "ONWARD";
+  type: 'EXCEL' | 'ONWARD';
   form: RawForm;
   registrationStages: RegistrationStage[];
   contactData: ContactData;
-  applicationData: ApplicationData["EXCEL" | "ONWARD"];
-  dropdownsFromDB: DropdownsFromDB["EXCEL" | "ONWARD"];
+  applicationData: ApplicationData['EXCEL' | 'ONWARD'];
+  dropdownsFromDB: DropdownsFromDB['EXCEL' | 'ONWARD'];
 
   availableSeasons: RawSeason[];
   applicationSeasonSetting: SeasonSetting;

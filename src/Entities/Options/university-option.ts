@@ -1,6 +1,6 @@
-import { RawUniversityOption } from "registration-secret-sauce";
-import { OptionInterface } from "registration-secret-sauce";
-import { IsVisible } from "../BaseClasses/is-visible";
+import { RawUniversityOption } from '../../Interfaces/raw-university-option.interface';
+import { OptionInterface } from '../../Interfaces/Form/Inputs/option.interface';
+import { IsVisible } from '../BaseClasses/is-visible';
 
 export class UniversityOption extends IsVisible implements OptionInterface {
   public id: string;

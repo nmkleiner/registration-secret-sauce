@@ -1,0 +1,74 @@
+@import 'src/assets/style/abstract/breakpoints';
+.panelContainer {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #eef2f4;
+  overflow: hidden;
+
+  .login-email-enter-active {
+    transition: all 0.5s ease-in;
+  }
+
+  .login-email-enter-from,
+  .login-email-leave-to {
+    max-height: 0;
+  }
+
+  .panel {
+    width: 100%;
+    background-color: #fff;
+    position: relative;
+    box-shadow: 0 4px 16px 0 rgba(26, 35, 52, 0.12);
+
+    @include desktop-only {
+      padding: 23px 20px 10px 20px;
+    }
+
+    .title {
+      letter-spacing: 1px;
+      margin-bottom: 30px;
+      display: inline-block;
+      position: relative;
+
+      span {
+        text-align: center;
+        text-transform: uppercase;
+        font-family: NexaRegular, sans-serif;
+        font-size: 12px;
+        -webkit-text-fill-color: transparent;
+        -webkit-background-clip: text;
+        background-image: linear-gradient(to right, #00a0e2, #00cef3);
+      }
+
+      .line {
+        margin-top: 16px;
+        height: 2px;
+        width: 300px;
+        left: -134px;
+        -webkit-text-fill-color: transparent;
+        background-image: linear-gradient(to right, #00a0e2, #00cef3);
+      }
+    }
+
+    .container {
+      margin-top: 0;
+      font-family: NexaRegular, sans-serif;
+    }
+
+    div {
+      color: #00a0e2;
+    }
+
+    @media screen and (min-width: 769px) {
+      width: 380px;
+      border-radius: 6px;
+    }
+
+    ::v-deep(.progressBarWrapper) {
+      left: 0;
+    }
+  }
+}

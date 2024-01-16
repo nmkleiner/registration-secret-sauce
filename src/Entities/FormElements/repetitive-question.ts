@@ -1,19 +1,22 @@
-import { LocalRawQuestion, RawQuestion } from "registration-secret-sauce";
-import { BaseSectionInterface } from "../Section/section.interface";
-import { InputWithOptions } from "./index";
-import { useApplicationStore } from "../../../../../../registration-secret-sauce/src/Stores/Stores/Application/application.store";
-import { BasicInput } from "./index";
-import { isEmpty } from "lodash-es";
-import { RepetitiveButton } from "./repetitive-button";
-import { OnwardQuestionUniqueNames } from "@/Modules/Onward/Enums/onward-question-names.enum";
+import {
+  LocalRawQuestion,
+  RawQuestion,
+} from '../../Interfaces/Form/question.interfaces';
+import { BaseSectionInterface } from '../Section/section.interface';
+import { InputWithOptions } from './index';
+import { useApplicationStore } from '../../Stores/Application/application.store';
+import { BasicInput } from './index';
+import { isEmpty } from 'lodash-es';
+import { RepetitiveButton } from './repetitive-button';
+import { OnwardQuestionUniqueNames } from '../../../../excel-registration-front/src/Modules/Onward/Enums/onward-question-names.enum';
 import {
   DuplicatedUserAnswer,
   StandardUserAnswer,
-} from "registration-secret-sauce";
-import { isRepetitiveQuestionValue } from "registration-secret-sauce";
-import { sanitizeString } from "../../../../excel-registration-front/src/Core/Helpers/sanitize-string";
-import { HiddenInput } from "./hidden-input";
-import { Option } from "../Options/option";
+} from '../../Types/Form/user-answer.type';
+import { isRepetitiveQuestionValue } from '../../Interfaces/Form/Inputs/repetitive-question-value.interface';
+import { sanitizeString } from '../../../../excel-registration-front/src/Core/Helpers/sanitize-string';
+import { HiddenInput } from './hidden-input';
+import { Option } from '../Options/option';
 
 export class RepetitiveQuestion extends InputWithOptions {
   public initialDependents: BasicInput[] = [];
@@ -21,15 +24,10 @@ export class RepetitiveQuestion extends InputWithOptions {
   public cancelledDependents: BasicInput[][] = [];
 
   public repetitiveButton: RepetitiveButton;
-  private excludedDependents: string[] = [
-    OnwardQuestionUniqueNames.requireEpiPen,
-  ];
+  private excludedDependents: string[] = [OnwardQuestionUniqueNames.requireEpiPen];
   private valuesFromSalesforce: Record<string, string>[] = [];
 
-  constructor(
-    rawQuestion: RawQuestion | LocalRawQuestion,
-    formSection: BaseSectionInterface
-  ) {
+  constructor(rawQuestion: RawQuestion | LocalRawQuestion, formSection: BaseSectionInterface) {
     super(rawQuestion, formSection);
     this.initValuesFromSalesforce(rawQuestion);
   }
@@ -42,13 +40,13 @@ export class RepetitiveQuestion extends InputWithOptions {
 
   initValuesFromSalesforce(rawQuestion: RawQuestion) {
     const getFormIdIndex = (values: Record<string, string>): number => {
-      const formId = values["Form_Id__c"];
-      return parseInt(formId.split("Id")[1]);
+      const formId = values['Form_Id__c'];
+      return parseInt(formId.split('Id')[1]);
     };
 
     if (isRepetitiveQuestionValue(rawQuestion.value)) {
       this.valuesFromSalesforce = rawQuestion.value.duplicatedValues.sort(
-        (a, b) => getFormIdIndex(a) - getFormIdIndex(b)
+        (a, b) => getFormIdIndex(a) - getFormIdIndex(b),
       );
     }
   }
@@ -66,19 +64,15 @@ export class RepetitiveQuestion extends InputWithOptions {
     const getInitialDependents = (dependents: BasicInput[]): BasicInput[] => {
       return dependents
         .filter((formElement) => !(formElement instanceof RepetitiveButton))
-        .filter(
-          (formElement) =>
-            !this.excludedDependents.includes(formElement.uniqueName)
-        );
+        .filter((formElement) => !this.excludedDependents.includes(formElement.uniqueName));
     };
     const initRepetitiveButton = (dependents: BasicInput[]) => {
       this.repetitiveButton = dependents.find(
-        (formElement): formElement is RepetitiveButton =>
-          formElement instanceof RepetitiveButton
+        (formElement): formElement is RepetitiveButton => formElement instanceof RepetitiveButton,
       );
 
       if (!this.repetitiveButton) {
-        console.error("RepetitiveQuestion: repetitiveButton is not defined");
+        console.error('RepetitiveQuestion: repetitiveButton is not defined');
       }
 
       this.repetitiveButton.hide();
@@ -106,17 +100,17 @@ export class RepetitiveQuestion extends InputWithOptions {
 
     const dependentsIds: string[] = getDependentsIds();
     const dependents = dependentsIds.map((id) =>
-      useApplicationStore().formElementsManager.getFormElementById(id)
+      useApplicationStore().formElementsManager.getFormElementById(id),
     );
     this.initialDependents = getInitialDependents(dependents);
 
     if (isEmpty(this.initialDependents)) {
-      console.error("RepetitiveQuestion: dependents is empty");
+      console.error('RepetitiveQuestion: dependents is empty');
     }
 
     initRepetitiveButton(dependents);
 
-    if (sanitizeString(this.value || "") === "yes") {
+    if (sanitizeString(this.value || '') === 'yes') {
       this.showDependents();
       fillDependentInputs();
     }
@@ -136,15 +130,11 @@ export class RepetitiveQuestion extends InputWithOptions {
     if (!isEmpty(this.displayedDependents)) {
       return;
     }
-    this.displayedDependents = [
-      this.cloneDependents(this.initialDependents, 0),
-    ];
+    this.displayedDependents = [this.cloneDependents(this.initialDependents, 0)];
   }
 
   public addDependents(index: number) {
-    this.displayedDependents.push(
-      this.cloneDependents(this.initialDependents, index)
-    );
+    this.displayedDependents.push(this.cloneDependents(this.initialDependents, index));
   }
 
   public hideDependents() {
@@ -156,18 +146,12 @@ export class RepetitiveQuestion extends InputWithOptions {
   }
 
   public removeDependents() {
-    this.cancelledDependents = [
-      ...this.cancelledDependents,
-      this.displayedDependents.pop(),
-    ];
+    this.cancelledDependents = [...this.cancelledDependents, this.displayedDependents.pop()];
   }
 
   public getHiddenDependents(): HiddenInput[] {
     return this.displayedDependents.reduce((acc, dependents) => {
-      return [
-        ...acc,
-        ...dependents.filter((dependent) => dependent instanceof HiddenInput),
-      ];
+      return [...acc, ...dependents.filter((dependent) => dependent instanceof HiddenInput)];
     }, []);
   }
 
@@ -201,7 +185,7 @@ export class RepetitiveQuestion extends InputWithOptions {
       inputs
         .map((input) => input.getAnswer())
         .filter(Boolean)
-        .filter((answer): answer is StandardUserAnswer => true)
+        .filter((answer): answer is StandardUserAnswer => true),
     );
   }
 }

@@ -1,8 +1,8 @@
-import { RawQuestion } from "registration-secret-sauce";
-import { InputWithOptions } from "./index";
-import { useDropdownOptionsStore } from "../../../../../../registration-secret-sauce/src/Stores/Stores/DropdownOptions/dropdown-options.store";
-import { BaseSectionInterface } from "../Section/section.interface";
-import { CountryOption } from "../Options/country-option";
+import { RawQuestion } from '../../Interfaces/Form/question.interfaces';
+import { InputWithOptions } from './index';
+import { useDropdownOptionsStore } from '../../Stores/DropdownOptions/dropdown-options.store';
+import { BaseSectionInterface } from '../Section/section.interface';
+import { CountryOption } from '../Options/country-option';
 
 export class CountryDropdown extends InputWithOptions {
   public declare options: CountryOption[];

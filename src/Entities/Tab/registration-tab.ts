@@ -1,10 +1,10 @@
-import { RegistrationStage } from "registration-secret-sauce";
-import { RawFormSection } from "registration-secret-sauce";
-import { FormSection } from "../Section";
-import { formSectionFactory } from "../../Factories/form-section.factory";
-import { isEmpty } from "lodash-es";
-import { IsLocked } from "../BaseClasses/is-locked";
-import { useFormNavigationStore } from "../../../../../../registration-secret-sauce/src/Stores/Stores/FormNavigation/form-navigation.store";
+import { RegistrationStage } from '../../Interfaces/Form/registration.stage.interface';
+import { RawFormSection } from '../../Interfaces/Form/section.interfaces';
+import { FormSection } from '../Section';
+import { formSectionFactory } from '../../Factories/form-section.factory';
+import { isEmpty } from 'lodash-es';
+import { IsLocked } from '../BaseClasses/is-locked';
+import { useFormNavigationStore } from '../../Stores/FormNavigation/form-navigation.store';
 
 export class RegistrationTab extends IsLocked {
   public key: string;

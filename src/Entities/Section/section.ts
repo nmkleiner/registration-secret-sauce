@@ -1,7 +1,7 @@
-import { IsOpen } from "../BaseClasses/is-open";
-import { translate } from "../../../../excel-registration-front/src/Core/Translations/vue-i18n";
-import { SectionInterface } from "./section.interface";
-import { BasicInput } from "../FormElements";
+import { IsOpen } from '../BaseClasses/is-open';
+import { translate } from '../../../../excel-registration-front/src/Core/Translations/vue-i18n';
+import { SectionInterface } from './section.interface';
+import { BasicInput } from '../FormElements';
 
 export class Section extends IsOpen implements SectionInterface {
   public name: string;
@@ -21,6 +21,6 @@ export class Section extends IsOpen implements SectionInterface {
   }
 
   public calculateSaveButtonText() {
-    return translate("saveButtons.save");
+    return translate('saveButtons.save');
   }
 }

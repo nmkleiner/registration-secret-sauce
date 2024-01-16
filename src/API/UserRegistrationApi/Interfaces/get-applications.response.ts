@@ -1,4 +1,4 @@
-import { PaymentStatus } from "../../../Interfaces";
+import { PaymentStatus } from '../../../Interfaces/application-data.interfaces';
 
 export interface GetApplicationsResponse {
   data: {

@@ -1,38 +1,57 @@
-import { defineStore } from "pinia";
-import { useUserStore } from "../User/user.store";
-import { useCountryStore } from "../Country/country.store";
-import { useFormNavigationStore } from "../FormNavigation/form-navigation.store";
-import { ApplicationState } from "./registration-form-state.interface";
-import { useDropdownOptionsStore } from "../DropdownOptions/dropdown-options.store";
-// import { useInternshipPreferencesStore } from '@/Modules/Excel/Stores/InternshipPreferences/internship-preferences.store';
-// import { useRouter } from 'vue-router';
-import { useSeasonStore } from "../Season/season.store";
-import { usePaymentStore } from "../Payment/payment.store";
-// import { ExcelPathNames } from '@/Modules/Excel/Router/path-names.enum';
-import { useStorage } from "@vueuse/core";
-import { first } from "lodash-es";
-import SeasonApi from "../../API/SeasonsApi/SeasonApi.ts";
-import { RawForm, RawSeason } from "../../Interfaces";
-import { FormDataResponse, GetFormDataPayload } from "../../API";
-import { buildUrlParams } from "../../Composables";
-import FormBuilderApi from "../../API/FormBuilderApi/form-builder.api.ts";
-import { useModalsStore } from "../Modals/modals.store.ts";
-import { ModalNames } from "../Modals/modals-state.interface.ts";
-// import AppConfig from '@/Core/Infrastructure/Config/AppConfig';
+import { defineStore } from 'pinia';
+import { useUserStore } from '../User/user.store';
+import { RawForm } from '../../Interfaces/Form/form.interface';
+import { useCountryStore } from '../Country/country.store';
+import { FormBuilderApi, UserRegistrationApi } from '../../API';
+import { useFormNavigationStore } from '../FormNavigation/form-navigation.store';
+import { ApplicationState } from './registration-form-state.interface';
+import { useDropdownOptionsStore } from '../DropdownOptions/dropdown-options.store';
+import { useInternshipPreferencesStore } from '../../../../excel-registration-front/src/Modules/Excel/Stores/InternshipPreferences/internship-preferences.store';
+import { useRouter } from 'vue-router';
+import FormElementsManager from '../../Managers/form-elements-manager';
+import { useSeasonStore } from '../Season/season.store';
+import {
+  ApplicationData,
+  DataForAlgorithmPrograms,
+  OnwardApplicationPrograms,
+} from '../../Interfaces/application-data.interfaces';
+import { usePaymentStore } from '../Payment/payment.store';
+import { useModalsStore } from '../Modals/modals.store';
+import { ModalNames } from '../Modals/modals-state.interface';
+import { ExcelPathNames } from '../../../../excel-registration-front/src/Modules/Excel/Router/path-names.enum';
+import { useStorage } from '@vueuse/core';
+import { first } from 'lodash-es';
+import { RawSeason } from '../../Interfaces/raw-season.interface';
+import router from '../../Router';
+import { useProduct } from '../../../../excel-registration-front/src/Core/Composables/program/useProduct';
+import {
+  isExcelGetResponse,
+  isOnwardGetResponse,
+} from '../../API/FormBuilderApi/Helpers/response-type';
+import { FormDataResponse } from '../../API/FormBuilderApi/Interfaces/get-form-data-base.interface';
+import { OnwardErrorMessageEnum } from '../../../../excel-registration-front/src/Modules/Onward/Enums/onward-error-message.enum';
+import AppConfig from '../../../../excel-registration-front/src/Core/Infrastructure/Config/AppConfig';
+import { ParentSectionManager } from '../../../../excel-registration-front/src/Modules/Onward/Manager/parent-section.manager';
+import { useProgramStore } from '../../../../excel-registration-front/src/Modules/Onward/Store/Program/program.store';
+import { ContactData } from '../../Interfaces/contact-data.interfaces';
+import SeasonApi from '../../API/SeasonsApi/SeasonApi';
+import { GetFormDataPayload } from '../../API/FormBuilderApi/Interfaces/get-form-data-payload.interface';
+import { buildUrlParams } from '../../Composables/use-create-account-answers';
+import { OnwardFormDataResponse } from '../../API/FormBuilderApi/Interfaces/onward-get-form-data-response.interface';
 
-export const useApplicationStore = defineStore("Application", {
+export const useApplicationStore = defineStore('Application', {
   state: (): ApplicationState => ({
-    formId: "",
-    formName: "",
+    formId: '',
+    formName: '',
     resourceId: null,
     maxFileSize: 10, // MB
-    applicationId: useStorage("applicationId", ""),
+    applicationId: useStorage('applicationId', ''),
     activePhase: 1,
     throwError: false,
     formElementsManager: new FormElementsManager(),
     parentSectionManager: new ParentSectionManager(),
     isPhase2Application: false,
-    activationStatus: "",
+    activationStatus: '',
     hasApplicationBeenSubmitted: false,
     isPhase2Submission: false,
     phase1: {
@@ -53,48 +72,48 @@ export const useApplicationStore = defineStore("Application", {
       return (
         (this.activePhase === 1 && this.hasApplicationBeenSubmitted) ||
         (this.activePhase === 2 && this.phase2.completed) ||
-        (this.activationStatus && this.activationStatus !== "Active")
+        (this.activationStatus && this.activationStatus !== 'Active')
       );
     },
   },
   actions: {
-    // beforeGetFormDataExcel(): boolean {
-    //   if (!useProduct().isExcel.value) {
-    //     return true;
-    //   }
-    //   useFormNavigationStore().resetNavigation();
-    //   const { phase } = useRouter().currentRoute.value.params;
-    //   if (!this.applicationId) {
-    //     console.error('Route error: application id is missing');
-    //     useRouter().push({ name: ExcelPathNames.Profile });
-    //     return false;
-    //   }
-    //   if (!phase) {
-    //     console.error('Route error: phase is missing');
-    //     useRouter().push({ name: ExcelPathNames.Profile });
-    //     return false;
-    //   }
-    //
-    //   this.activePhase = Number(phase);
-    //   return true;
-    // },
-    // afterGetFormDataExcel(formData: FormDataResponse) {
-    //   if (!isExcelGetResponse(formData)) {
-    //     return;
-    //   }
-    //   if (this.activePhase === 2 && !this.isPhase2Application) {
-    //     if (AppConfig.environment === 'production') {
-    //       router.push({ name: ExcelPathNames.Profile });
-    //     }
-    //   }
-    //   this.setApplicationStateExcel(formData.applicationData);
-    //   useUserStore().setIsraelPassport(formData.israelPassport);
-    //   useInternshipPreferencesStore().initInternshipPreferences(
-    //     formData.selectedJobOfferings,
-    //     formData.industries,
-    //   );
-    //   this.setMaxFileSize(formData.settings.maxFileSize);
-    // },
+    beforeGetFormDataExcel(): boolean {
+      if (!useProduct().isExcel.value) {
+        return true;
+      }
+      useFormNavigationStore().resetNavigation();
+      const { phase } = useRouter().currentRoute.value.params;
+      if (!this.applicationId) {
+        console.error('Route error: application id is missing');
+        useRouter().push({ name: ExcelPathNames.Profile });
+        return false;
+      }
+      if (!phase) {
+        console.error('Route error: phase is missing');
+        useRouter().push({ name: ExcelPathNames.Profile });
+        return false;
+      }
+
+      this.activePhase = Number(phase);
+      return true;
+    },
+    afterGetFormDataExcel(formData: FormDataResponse) {
+      if (!isExcelGetResponse(formData)) {
+        return;
+      }
+      if (this.activePhase === 2 && !this.isPhase2Application) {
+        if (AppConfig.environment === 'production') {
+          router.push({ name: ExcelPathNames.Profile });
+        }
+      }
+      this.setApplicationStateExcel(formData.applicationData);
+      useUserStore().setIsraelPassport(formData.israelPassport);
+      useInternshipPreferencesStore().initInternshipPreferences(
+        formData.selectedJobOfferings,
+        formData.industries,
+      );
+      this.setMaxFileSize(formData.settings.maxFileSize);
+    },
     beforeGetFormDataOnward() {
       this.applicationId = useUserStore().ids.activeApplicationId;
     },
@@ -103,18 +122,15 @@ export const useApplicationStore = defineStore("Application", {
         return;
       }
 
-      this.setApplicationAndUserStateOnward(
-        formData.applicationData,
-        formData.contactData
-      );
+      this.setApplicationAndUserStateOnward(formData.applicationData, formData.contactData);
     },
     afterInitializeFormOnward() {
-      if (!useConfig().getProduct() === "ONWARD") return;
+      if (!useProduct().isOnward.value) return;
       this.parentSectionManager.filterEmergencyContactOptions();
     },
     async getFormData() {
       useModalsStore().openModal(ModalNames.pleaseWait);
-      // const isContinue = this.beforeGetFormDataExcel();
+      const isContinue = this.beforeGetFormDataExcel();
       this.beforeGetFormDataOnward();
       const contactId = useUserStore().ids.contactId;
       const applicationId = this.currentApplicationId
@@ -122,10 +138,10 @@ export const useApplicationStore = defineStore("Application", {
         : this.applicationId;
       const countryIsoCode = useCountryStore().productCountryIsoCode;
 
-      useModalsStore().closeModal(ModalNames.pleaseWait);
-      // if (!isContinue) {
-      //   return;
-      // }
+      if (!isContinue) {
+        useModalsStore().closeModal(ModalNames.pleaseWait);
+        return;
+      }
       // pull the data
       const phase = router.currentRoute.value.params.phase as string;
       const getFormDataPayload = {
@@ -134,15 +150,11 @@ export const useApplicationStore = defineStore("Application", {
         applicationId,
         countryIsoCode,
       };
-      let formDataResponse = await FormBuilderApi.getFormData(
-        getFormDataPayload
-      );
+      let formDataResponse = await FormBuilderApi.getFormData(getFormDataPayload);
 
-      useSeasonStore().setApplicationSeason(
-        formDataResponse.applicationSeasonSetting
-      );
+      useSeasonStore().setApplicationSeason(formDataResponse.applicationSeasonSetting);
 
-      if (useConfig().getProduct() === "ONWARD") {
+      if (useProduct().isOnward.value) {
         const response = formDataResponse as OnwardFormDataResponse;
         if (
           response.applicationData.askControlQuestions &&
@@ -157,12 +169,11 @@ export const useApplicationStore = defineStore("Application", {
       // update season setting
       if (
         !formDataResponse.form &&
-        (formDataResponse.applicationData as ApplicationData["ONWARD"])
-          ?.isAllowChangeOnwardTrip
+        (formDataResponse.applicationData as ApplicationData['ONWARD'])?.isAllowChangeOnwardTrip
       ) {
         formDataResponse = await this.handleOldSeasonApplication(
           formDataResponse,
-          getFormDataPayload
+          getFormDataPayload,
         );
       }
 
@@ -171,25 +182,19 @@ export const useApplicationStore = defineStore("Application", {
       useUserStore().setContactId(formDataResponse.contactData.id);
       useUserStore().setContactInformation(formDataResponse.contactData);
 
-      useUserStore().setContactDocuments(
-        formDataResponse.contactData.documents
-      );
-      useUserStore().setPhase2Documents(
-        formDataResponse.contactData.phase2Documents
-      );
-      // this.afterGetFormDataExcel(formDataResponse);
+      useUserStore().setContactDocuments(formDataResponse.contactData.documents);
+      useUserStore().setPhase2Documents(formDataResponse.contactData.phase2Documents);
+      this.afterGetFormDataExcel(formDataResponse);
       this.afterGetFormDataOnward(formDataResponse);
 
       useDropdownOptionsStore().setDbOptions(formDataResponse);
 
-      usePaymentStore().setPaymentState(
-        formDataResponse.applicationData.payment
-      );
+      usePaymentStore().setPaymentState(formDataResponse.applicationData.payment);
 
       // create the tabs,sections,questions
       useFormNavigationStore().initNavigation(
         formDataResponse.registrationStages,
-        formDataResponse.form.sections
+        formDataResponse.form.sections,
       );
 
       this.formElementsManager.initializeOptionConditions();
@@ -201,7 +206,7 @@ export const useApplicationStore = defineStore("Application", {
     },
     async handleOldSeasonApplication(
       formData: FormDataResponse,
-      payload: GetFormDataPayload
+      payload: GetFormDataPayload,
     ): Promise<FormDataResponse> {
       const { availableSeasons } = formData;
       const seasonSettingId = first<RawSeason>(availableSeasons).value;
@@ -223,19 +228,18 @@ export const useApplicationStore = defineStore("Application", {
     setApplicationId(id: string) {
       this.applicationId = id;
     },
-    setApplicationStateExcel(applicationData: ApplicationData["EXCEL"]) {
+    setApplicationStateExcel(applicationData: ApplicationData['EXCEL']) {
       this.phase1.allowSubmission = applicationData.phase1AllowSubmission;
       this.phase2.allowSubmission = applicationData.phase2AllowSubmission;
       this.phase1.completed = applicationData.isMainPhaseComplete;
       this.phase2.completed = applicationData.isPhase2Completed;
       this.isPhase2Application = applicationData.isPhase2Application;
       this.activationStatus = applicationData.activationStatus;
-      this.hasApplicationBeenSubmitted =
-        applicationData.hasApplicationBeenSubmitted;
+      this.hasApplicationBeenSubmitted = applicationData.hasApplicationBeenSubmitted;
     },
     setApplicationAndUserStateOnward(
-      applicationData: ApplicationData["ONWARD"],
-      contactData: ContactData
+      applicationData: ApplicationData['ONWARD'],
+      contactData: ContactData,
     ) {
       this.phase1.allowSubmission = applicationData.phase1AllowSubmission;
       this.isPhase2Application = applicationData.isPhase2Application;
@@ -243,7 +247,7 @@ export const useApplicationStore = defineStore("Application", {
       this.updateApplicationPrograms(applicationData.applicationTripOfferings);
 
       this.setIneligibleError(
-        applicationData.finalEligibility === OnwardErrorMessageEnum.Ineligible
+        applicationData.finalEligibility === OnwardErrorMessageEnum.Ineligible,
       );
 
       useUserStore().setContactHasLivingParent(applicationData.hasLivingParent);
@@ -293,10 +297,10 @@ export const useApplicationStore = defineStore("Application", {
         this.setApplicationId(applicationId);
         useUserStore().setApplicationId(applicationId);
         await router.push({
-          name: "Application",
+          name: 'Application',
           params: {
             applicationId: applicationId,
-            phase: "1",
+            phase: '1',
           },
         });
       }
@@ -307,20 +311,16 @@ export const useApplicationStore = defineStore("Application", {
     setCurrentApplicationId(currentApplicationId: string): void {
       this.currentApplicationId = currentApplicationId;
     },
-    updateDataForAlgorithmPrograms(
-      dataForAlgorithmPrograms: DataForAlgorithmPrograms
-    ): void {
+    updateDataForAlgorithmPrograms(dataForAlgorithmPrograms: DataForAlgorithmPrograms): void {
       this.dataForAlgorithmPrograms = { ...dataForAlgorithmPrograms };
     },
     updateApplicationPrograms(applicationPrograms: OnwardApplicationPrograms) {
       if (applicationPrograms?.onwardPrograms?.length) {
-        useProgramStore().setApplicationPrograms(
-          applicationPrograms.onwardPrograms
-        );
+        useProgramStore().setApplicationPrograms(applicationPrograms.onwardPrograms);
       }
       if (applicationPrograms?.notRelevantOnwardPrograms?.length) {
         useProgramStore().setNotRelevantApplicationPrograms(
-          applicationPrograms.notRelevantOnwardPrograms
+          applicationPrograms.notRelevantOnwardPrograms,
         );
       }
     },

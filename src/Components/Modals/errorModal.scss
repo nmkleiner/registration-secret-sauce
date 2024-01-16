@@ -1,0 +1,15 @@
+@import 'src/assets/style/abstract/breakpoints';
+
+.errorModalWrapper {
+  padding: 50px;
+  width: 500px;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+
+  @include tablet {
+    width: unset;
+  }
+}

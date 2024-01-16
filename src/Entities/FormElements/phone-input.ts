@@ -1,19 +1,19 @@
-import { BasicInput } from "./index";
-import { LocalRawQuestion, RawQuestion } from "registration-secret-sauce";
-import { BaseSectionInterface } from "../Section/section.interface";
-import { stringToDecimalInt } from "../../../../excel-registration-front/src/Core/Helpers/string-to-decimal-in";
-import { useCountryStore } from "../../../../../../registration-secret-sauce/src/Stores/Stores/Country/country.store";
+import { BasicInput } from './index';
+import {
+  LocalRawQuestion,
+  RawQuestion,
+} from '../../Interfaces/Form/question.interfaces';
+import { BaseSectionInterface } from '../Section/section.interface';
+import { stringToDecimalInt } from '../../../../excel-registration-front/src/Core/Helpers/string-to-decimal-in';
+import { useCountryStore } from '../../Stores/Country/country.store';
 
 export class PhoneInput extends BasicInput {
   public countryName: string;
-  public countryPrefix = "";
+  public countryPrefix = '';
   public displayPhonePrefix?: boolean;
-  private readonly phoneFormat = "XXX-XXX-XXXXXX";
+  private readonly phoneFormat = 'XXX-XXX-XXXXXX';
 
-  constructor(
-    rawQuestion: RawQuestion | LocalRawQuestion,
-    formSection: BaseSectionInterface
-  ) {
+  constructor(rawQuestion: RawQuestion | LocalRawQuestion, formSection: BaseSectionInterface) {
     super(rawQuestion, formSection);
     this.rules.minCharacters = [String(this.phoneFormat.length - 3)]; //Supporting also XXX-XXX (with prefix)
     this.rules.maxCharacters = [String(this.phoneFormat.length)];
@@ -23,7 +23,7 @@ export class PhoneInput extends BasicInput {
 
   public getValueForAnswer(): string {
     if (!this.value) {
-      return "";
+      return '';
     }
     if (!this.countryPrefix || this.displayPhonePrefix) {
       return this.value;
@@ -36,9 +36,7 @@ export class PhoneInput extends BasicInput {
   }
 
   public setCountryPrefix(countryPrefix: string) {
-    this.countryPrefix = countryPrefix
-      ? String(stringToDecimalInt(countryPrefix))
-      : "";
+    this.countryPrefix = countryPrefix ? String(stringToDecimalInt(countryPrefix)) : '';
   }
 
   /*

@@ -1,5 +1,7 @@
-import { RemovableRef } from "@vueuse/shared";
-import { DataForAlgorithmPrograms } from "../../Interfaces";
+import FormElementsManager from '../../Managers/form-elements-manager';
+import { RemovableRef } from '@vueuse/shared';
+import { ParentSectionManager } from '../../../../excel-registration-front/src/Modules/Onward/Manager/parent-section.manager';
+import { DataForAlgorithmPrograms } from '../../Interfaces/application-data.interfaces';
 
 export interface ApplicationState {
   formId: string;

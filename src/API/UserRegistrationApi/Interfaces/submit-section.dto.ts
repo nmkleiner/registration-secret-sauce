@@ -1,4 +1,4 @@
-import { UploadedFile, UserAnswer } from "../../../Types";
+import { UploadedFile, UserAnswer } from '../../../Types/Form/user-answer.type';
 
 export interface SubmitSectionDto {
   formSectionId: string;

@@ -1,7 +1,7 @@
-import { AnswerMapping, QuestionOption } from "registration-secret-sauce";
-import { sanitizeStringButKeepCase } from "../../../../excel-registration-front/src/Core/Helpers/sanitize-string";
-import { OptionInterface } from "registration-secret-sauce";
-import { IsVisible } from "../BaseClasses/is-visible";
+import { AnswerMapping, QuestionOption } from '../../Interfaces/Form/option.interfaces';
+import { sanitizeStringButKeepCase } from '../../../../excel-registration-front/src/Core/Helpers/sanitize-string';
+import { OptionInterface } from '../../Interfaces/Form/Inputs/option.interface';
+import { IsVisible } from '../BaseClasses/is-visible';
 
 export class Option extends IsVisible implements OptionInterface {
   public id: string;
@@ -15,7 +15,7 @@ export class Option extends IsVisible implements OptionInterface {
     this.label = sanitizeStringButKeepCase(rawOption.name);
     this.sort = rawOption.sort;
     this.value = sanitizeStringButKeepCase(
-      rawOption.mapping ? rawOption.mapping.answerName : rawOption.name
+      rawOption.mapping ? rawOption.mapping.answerName : rawOption.name,
     );
     this.mapping = rawOption.mapping;
   }

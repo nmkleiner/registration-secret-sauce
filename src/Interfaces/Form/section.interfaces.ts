@@ -1,5 +1,5 @@
 import { RawQuestion } from './question.interfaces';
-import {SectionNames} from "../../Enums";
+import { ExcelSectionNames } from '../../../../excel-registration-front/src/Modules/Excel/Enums/excel-section-names.enum';
 
 export interface RawFormSection {
   id: string;
@@ -22,5 +22,5 @@ export interface SectionMapping {
   fieldName: string;
   objectName: string;
   sectionName: string;
-  uniqueName: SectionNames;
+  uniqueName: ExcelSectionNames;
 }

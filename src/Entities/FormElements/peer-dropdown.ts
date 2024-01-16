@@ -1,9 +1,9 @@
-import { InputWithOptions } from "./index";
-import { RawQuestion } from "registration-secret-sauce";
-import { BaseSectionInterface } from "../Section/section.interface";
-import { Option } from "../Options/option";
-import { OptionTransformer } from "../../Transformers/option.transformer";
-import { useUserStore } from "../../../../../../registration-secret-sauce/src/Stores/Stores/User/user.store";
+import { InputWithOptions } from './index';
+import { RawQuestion } from '../../Interfaces/Form/question.interfaces';
+import { BaseSectionInterface } from '../Section/section.interface';
+import { Option } from '../Options/option';
+import { OptionTransformer } from '../../Transformers/option.transformer';
+import { useUserStore } from '../../Stores/User/user.store';
 
 export class PeerDropdown extends InputWithOptions {
   constructor(rawQuestion: RawQuestion, formSection: BaseSectionInterface) {
@@ -15,7 +15,7 @@ export class PeerDropdown extends InputWithOptions {
 
     if (!useUserStore().contactInformation?.hasLivingParent) {
       const parentOption = options.find(
-        (option) => option.value === "Peer from my parents country"
+        (option) => option.value === 'Peer from my parents country',
       );
       parentOption.hide();
     }

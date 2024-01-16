@@ -1,11 +1,8 @@
-import { ModalNames } from "./modals-state.interface";
-import { ref, Ref } from "vue";
+import { ModalNames } from './modals-state.interface';
+import { Ref } from 'vue';
 
 const modalRefs: Ref<
-  Record<
-    ModalNames,
-    { ref: HTMLDialogElement; isOpen: boolean; isPopUp?: boolean; data?: any }
-  >
+  Record<ModalNames, { ref: HTMLDialogElement; isOpen: boolean; isPopUp?: boolean; data?: any }>
 > = ref({
   [ModalNames.error]: { ref: null, isOpen: false },
   [ModalNames.waiver]: { ref: null, isOpen: false },
@@ -27,7 +24,7 @@ const modalRefs: Ref<
 
 export function useModalsStore() {
   function openModal(modal: ModalNames, data: any = null) {
-    console.info("openModal", modal, modalRefs.value);
+    console.info('openModal', modal, modalRefs.value);
     const modalData = modalRefs.value[modal];
     modalData.ref.close(); // this prevents some crashes
     modalData.isOpen = true;
@@ -37,15 +34,15 @@ export function useModalsStore() {
       modalData.ref.show();
     } else {
       modalData.ref.showModal();
-      document.querySelector("body").style.overflow = "hidden";
+      document.querySelector('body').style.overflow = 'hidden';
     }
   }
 
   function closeModal(modal: ModalNames) {
-    console.info("closeModal", modal, modalRefs.value);
+    console.info('closeModal', modal, modalRefs.value);
     modalRefs.value[modal].ref.close();
     modalRefs.value[modal].isOpen = false;
-    document.querySelector("body").style.overflow = "auto";
+    document.querySelector('body').style.overflow = 'auto';
   }
 
   return {

@@ -1,4 +1,5 @@
-import {DocumentStatus,DocumentType} from "../Enums";
+import { DocumentStatus } from '../Enums/document-status.enum';
+import { DocumentType } from '../Enums/document-type.enum';
 
 export type ContactData = {
   documents: UserDocument[];

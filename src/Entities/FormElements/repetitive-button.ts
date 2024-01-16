@@ -1,16 +1,16 @@
-import { LocalRawQuestion, RawQuestion } from "registration-secret-sauce";
-import { BaseSectionInterface } from "../Section/section.interface";
-import { BasicInput } from "./index";
+import {
+  LocalRawQuestion,
+  RawQuestion,
+} from '../../Interfaces/Form/question.interfaces';
+import { BaseSectionInterface } from '../Section/section.interface';
+import { BasicInput } from './index';
 
 export class RepetitiveButton extends BasicInput {
   public index: number = 0;
   public minimumIndex: number = 0;
   public maximumIndex: number = 5 - 1; // TODO: receive from back
 
-  constructor(
-    rawQuestion: RawQuestion | LocalRawQuestion,
-    formSection: BaseSectionInterface
-  ) {
+  constructor(rawQuestion: RawQuestion | LocalRawQuestion, formSection: BaseSectionInterface) {
     super(rawQuestion, formSection);
   }
 

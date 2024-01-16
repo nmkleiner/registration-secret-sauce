@@ -1,12 +1,12 @@
-import { BasicInput } from "./index";
-import { Address, isAddress } from "registration-secret-sauce";
-import { RawQuestion } from "registration-secret-sauce";
-import { BaseSectionInterface } from "../Section/section.interface";
-import { PhoneInput } from "./phone-input";
-import { OnwardQuestionUniqueNames } from "@/Modules/Onward/Enums/onward-question-names.enum";
-import { useDropdownOptionsStore } from "../../../../../../registration-secret-sauce/src/Stores/Stores/DropdownOptions/dropdown-options.store";
-import { CountryOption } from "../Options/country-option";
-import { useApplicationStore } from "../../../../../../registration-secret-sauce/src/Stores/Stores/Application/application.store";
+import { BasicInput } from './index';
+import { Address, isAddress } from '../../Interfaces/Form/Inputs/address.interface';
+import { RawQuestion } from '../../Interfaces/Form/question.interfaces';
+import { BaseSectionInterface } from '../Section/section.interface';
+import { PhoneInput } from './phone-input';
+import { OnwardQuestionUniqueNames } from '../../../../excel-registration-front/src/Modules/Onward/Enums/onward-question-names.enum';
+import { useDropdownOptionsStore } from '../../Stores/DropdownOptions/dropdown-options.store';
+import { CountryOption } from '../Options/country-option';
+import { useApplicationStore } from '../../Stores/Application/application.store';
 
 export class AddressInput extends BasicInput {
   public addressValue: Address;
@@ -16,19 +16,13 @@ export class AddressInput extends BasicInput {
     super(rawQuestion, formSection);
 
     this.relatedPhoneInput = this.getRelatedPhoneInput();
-    this.setAddress(
-      typeof rawQuestion.value === "object"
-        ? (rawQuestion.value as Address)
-        : null
-    );
+    this.setAddress(typeof rawQuestion.value === 'object' ? (rawQuestion.value as Address) : null);
   }
 
   public setAddress(address?: Address) {
     if (address) {
       this.addressValue = address;
-      this.injectPrefixToRelatedPhoneInput(
-        this.getCountryOption(address.country)
-      );
+      this.injectPrefixToRelatedPhoneInput(this.getCountryOption(address.country));
     } else {
       this.addressValue = null;
       this.injectPrefixToRelatedPhoneInput(null);
@@ -50,10 +44,10 @@ export class AddressInput extends BasicInput {
 
   public getValueFromAddress(address: Address) {
     const filterAddress = Array.from(
-      Object.values(address).filter((value) => typeof value === "string")
+      Object.values(address).filter((value) => typeof value === 'string'),
     );
 
-    return filterAddress.length >= 2 ? filterAddress.join(", ") : "";
+    return filterAddress.length >= 2 ? filterAddress.join(', ') : '';
   }
 
   private getCountryOption(countryIsoCode: string): CountryOption {
@@ -64,13 +58,13 @@ export class AddressInput extends BasicInput {
   private injectPrefixToRelatedPhoneInput(option: CountryOption): void {
     if (this.relatedPhoneInput) {
       if (!option) {
-        this.relatedPhoneInput.setCountryPrefix("");
+        this.relatedPhoneInput.setCountryPrefix('');
         return;
       }
 
       option.areaCode
         ? this.relatedPhoneInput.setCountryPrefix(`${option.areaCode}`)
-        : this.relatedPhoneInput.setCountryPrefix("");
+        : this.relatedPhoneInput.setCountryPrefix('');
     }
   }
 
@@ -94,8 +88,6 @@ export class AddressInput extends BasicInput {
       default:
         return null;
     }
-    return useApplicationStore().formElementsManager.getPhoneInputByUniqueName(
-      phoneUniqueName
-    );
+    return useApplicationStore().formElementsManager.getPhoneInputByUniqueName(phoneUniqueName);
   }
 }
