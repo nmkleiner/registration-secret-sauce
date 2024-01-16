@@ -1,4 +1,3 @@
-import { Section } from './section';
-import { FormSection } from './form-section';
-
-export { FormSection, Section };
+export * from "./section.ts";
+export * from "./section.interface.ts";
+export * from "./form-section.ts";
